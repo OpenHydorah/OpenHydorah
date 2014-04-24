@@ -53,7 +53,7 @@ int InitFS(const char* arg0)
 	if (PHYSFS_mount("assets/fonts", "/fonts", 1) == 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-				"Failed to mount assets/graphics/fonts folder. %s\n",
+				"Failed to mount assets/fonts folder. %s\n",
 				PHYSFS_getLastError()
 				);
 
@@ -63,7 +63,7 @@ int InitFS(const char* arg0)
 	if (PHYSFS_mount("assets/sounds", "/sounds", 1) == 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-				"Failed to mount assets/graphics/sounds folder. %s\n",
+				"Failed to mount assets/sounds folder. %s\n",
 				PHYSFS_getLastError()
 				);
 
@@ -73,7 +73,17 @@ int InitFS(const char* arg0)
 	if (PHYSFS_mount("assets/musics", "/musics", 1) == 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-				"Failed to mount assets/graphics/musics folder. %s\n",
+				"Failed to mount assets/musics folder. %s\n",
+				PHYSFS_getLastError()
+				);
+
+		return 1;
+	}
+
+	if (PHYSFS_mount("assets/sprites", "/sprites", 1) == 0)
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+				"Failed to mount assets/sprites folder. %s\n",
 				PHYSFS_getLastError()
 				);
 
