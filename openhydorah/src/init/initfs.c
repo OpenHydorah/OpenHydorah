@@ -29,5 +29,57 @@ int InitFS(const char* arg0)
 
 		return 1;
 	}
+
+	if (PHYSFS_mount("assets/graphics/sprites", "/sprites", 1) == 0)
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+				"Failed to mount assets/graphics/sprites folder. %s\n",
+				PHYSFS_getLastError()
+				);
+
+		return 1;
+	}
+
+	if (PHYSFS_mount("assets/graphics/backgrounds", "/backgrounds", 1) == 0)
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+				"Failed to mount assets/graphics/backgrounds folder. %s\n",
+				PHYSFS_getLastError()
+				);
+
+		return 1;
+	}
+
+	if (PHYSFS_mount("assets/fonts", "/fonts", 1) == 0)
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+				"Failed to mount assets/graphics/fonts folder. %s\n",
+				PHYSFS_getLastError()
+				);
+
+		return 1;
+	}
+
+	if (PHYSFS_mount("assets/sounds", "/sounds", 1) == 0)
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+				"Failed to mount assets/graphics/sounds folder. %s\n",
+				PHYSFS_getLastError()
+				);
+
+		return 1;
+	}
+
+	if (PHYSFS_mount("assets/musics", "/musics", 1) == 0)
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+				"Failed to mount assets/graphics/musics folder. %s\n",
+				PHYSFS_getLastError()
+				);
+
+		return 1;
+	}
+
+	return 0;
 }
 
