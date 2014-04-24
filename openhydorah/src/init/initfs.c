@@ -30,7 +30,7 @@ int InitFS(const char* arg0)
 		return 1;
 	}
 
-	if (PHYSFS_mount("assets/graphics/sprites", "/sprites", 1) == 0)
+	if (PHYSFS_mount("assets/graphics/sprites", "/graphics/sprites", 1) == 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 				"Failed to mount assets/graphics/sprites folder. %s\n",
@@ -40,7 +40,7 @@ int InitFS(const char* arg0)
 		return 1;
 	}
 
-	if (PHYSFS_mount("assets/graphics/backgrounds", "/backgrounds", 1) == 0)
+	if (PHYSFS_mount("assets/graphics/backgrounds", "/graphics/backgrounds", 1) == 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
 				"Failed to mount assets/graphics/backgrounds folder. %s\n",
