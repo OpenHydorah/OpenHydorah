@@ -16,6 +16,7 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "cleanup.h"
+#include <physfs.h>
 
 void CleanSDL(SDL_Window* window, SDL_Renderer* renderer)
 {
@@ -31,5 +32,7 @@ void CleanSDL(SDL_Window* window, SDL_Renderer* renderer)
 void Cleanup(SDL_Window* window, SDL_Renderer* renderer)
 {
 	CleanSDL(window, renderer);
+
+	PHYSFS_deinit();
 }
 
