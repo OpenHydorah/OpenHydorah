@@ -15,18 +15,19 @@ You should have received a copy of the GNU General Public License
 along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef OPENHYDORAH_INIT_H
-#define OPENHYDORAH_INIT_H
+#include "init.h"
 
-#include <SDL.h>
-#include <physfs.h>
+int InitFS(const char* arg0)
+{
+	PHYSFS_init(arg0);
+	if (PHYSFS_mount("assets", NULL, 0) == 0)
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+				"Failed to mount assets/ folder. %s\n",
+				PHYSFS_getLastError()
+				);
 
-int InitSDL(SDL_Window** window, SDL_Renderer** renderer,
-		const int width, const int height);
+		return 1;
+	}
+}
 
-int InitFS(const char* arg0);
-
-int Initialize(SDL_Window** window, SDL_Renderer** renderer,
-		const int width, const int height, char* argv[]);
-
-#endif // OPENHYDORAH_INIT_H

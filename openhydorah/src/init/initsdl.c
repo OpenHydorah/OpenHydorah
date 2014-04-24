@@ -16,8 +16,6 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "init.h"
-#include "cleanup.h"
-#include "physfs.h"
 
 int InitSDL(SDL_Window** window, SDL_Renderer** renderer,
 		const int width, const int height)
@@ -58,24 +56,3 @@ int InitSDL(SDL_Window** window, SDL_Renderer** renderer,
 	return 0;
 }
 
-int Initialize(SDL_Window** window, SDL_Renderer** renderer,
-		const int width, const int height, char* argv[])
-{
-	if (InitSDL(window, renderer, width, height) != 0) {
-		CleanSDL(*window, *renderer);
-		return 1;
-	}
-
-	PHYSFS_init(argv[0]);
-	if (PHYSFS_mount("assets", NULL, 0) == 0)
-	{
-		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-				"Failed to mount assets/ folder. %s\n",
-				PHYSFS_getLastError()
-				);
-
-		return 1;
-	}
-
-	return 0;
-}

@@ -15,18 +15,20 @@ You should have received a copy of the GNU General Public License
 along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef OPENHYDORAH_INIT_H
-#define OPENHYDORAH_INIT_H
-
-#include <SDL.h>
-#include <physfs.h>
-
-int InitSDL(SDL_Window** window, SDL_Renderer** renderer,
-		const int width, const int height);
-
-int InitFS(const char* arg0);
+#include "init.h"
+#include "cleanup.h"
 
 int Initialize(SDL_Window** window, SDL_Renderer** renderer,
-		const int width, const int height, char* argv[]);
+		const int width, const int height, char* argv[])
+{
+	if (InitSDL(window, renderer, width, height) != 0) {
+		CleanSDL(*window, *renderer);
+		return 1;
+	}
 
-#endif // OPENHYDORAH_INIT_H
+	if (InitFS(argv[0]) != 0) {
+		return 1;
+	}
+
+	return 0;
+}

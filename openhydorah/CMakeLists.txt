@@ -4,7 +4,7 @@ project (OpenHydorah)
 set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 
 include_directories(include)
-set (SRC src/main.c src/init.c src/cleanup.c)
+file (GLOB SRC src/*.c src/init/*.c)
 
 add_executable(hydorah ${SRC})
 
