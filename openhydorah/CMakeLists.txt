@@ -22,10 +22,20 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 	endif ()
 endif ()
 
+if (NOT WIN32)
+	target_link_libraries(hydorah -lm)
+endif ()
+
 find_package(SDL2 REQUIRED)
 if (${SDL_FOUND})
 	include_directories(${SDL_INCLUDE_DIR})
 	target_link_libraries(hydorah ${SDL_LIBRARY})
+endif ()
+
+find_package(SDL2_image REQUIRED)
+if (${SDL_IMAGE_FOUND})
+	include_directories(${SDL_IMAGE_INCLUDE_DIRS})
+	target_link_libraries(hydorah ${SDL_IMAGE_LIBRARIES})
 endif ()
 
 find_package(PhysFS REQUIRED)
