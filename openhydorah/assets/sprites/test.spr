@@ -1,0 +1,11 @@
+<sprite>
+	<img>/graphics/sprites/astroids.png</img>
+	<frames>
+		<frame>
+			<x>0</x>
+			<y>0</y>
+			<width>20</width>
+			<height>20</height>
+		</frame>
+	</frames>
+</sprite>

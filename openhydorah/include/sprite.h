@@ -15,38 +15,23 @@ You should have received a copy of the GNU General Public License
 along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef OPENHYDORAH_SPRITE_H
+#define OPENHYDORAH_SPRITE_H
+
 #include <SDL.h>
-#include "init.h"
-#include "cleanup.h"
-#include "sprite.h"
+#include <stdint.h>
 
-int main(int argc, char* argv[])
-{
-	SDL_Window* window = NULL;
-	SDL_Renderer* renderer = NULL;
+typedef struct SFrame {
+	SDL_Rect rect;
+	struct SFrame* next;
+} Frame;
 
-	if (Initialize(&window, &renderer,
-				600, 480, argv
-				) != 0)
-	{
-		return 1;
-	}
+typedef struct {
+	char* img;
+	Frame* frames;
+	uint32_t numFrames;
+} Sprite;
 
-	int running = 1;
-	while (running)
-	{
-		SDL_Event event;
-		while (SDL_PollEvent(&event))
-		{
-			if (event.type == SDL_QUIT)
-				running = 0;
-		}
+Sprite* LoadSprite(const char* filename);
 
-		SDL_RenderClear(renderer);
-		SDL_RenderPresent(renderer);
-	}
-
-	Cleanup(window, renderer);
-
-	return 0;
-}
+#endif // OPENHYDORAH_SPRITE_H
