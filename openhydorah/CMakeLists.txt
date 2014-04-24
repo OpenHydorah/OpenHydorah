@@ -8,6 +8,20 @@ file (GLOB SRC src/*.c src/init/*.c)
 
 add_executable(hydorah ${SRC})
 
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+	if (NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/assets)
+		if (WIN32)
+			file (COPY ${CMAKE_CURRENT_SOURCE_DIR}/assets ${CMAKE_CURRENT_BINARY_DIR}/assets)
+		else ()
+				ADD_CUSTOM_COMMAND (
+					TARGET hydorah POST_BUILD
+					COMMAND ln -s ${CMAKE_CURRENT_SOURCE_DIR}/assets ${CMAKE_CURRENT_BINARY_DIR}/assets
+					COMMENT "Creating symbolic link"
+				)
+		endif ()
+	endif ()
+endif ()
+
 find_package(SDL2 REQUIRED)
 if (${SDL_FOUND})
 	include_directories(${SDL_INCLUDE_DIR})
