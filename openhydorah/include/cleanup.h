@@ -22,4 +22,6 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 
 void CleanSDL(SDL_Window* window, SDL_Renderer* renderer);
 
+void Cleanup(SDL_Window* window, SDL_Renderer* renderer);
+
 #endif // OPENHYDORAH_CLEANUP_H

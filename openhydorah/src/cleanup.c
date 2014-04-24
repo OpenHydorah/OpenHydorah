@@ -28,3 +28,8 @@ void CleanSDL(SDL_Window* window, SDL_Renderer* renderer)
 	SDL_Quit();
 }
 
+void Cleanup(SDL_Window* window, SDL_Renderer* renderer)
+{
+	CleanSDL(window, renderer);
+}
+

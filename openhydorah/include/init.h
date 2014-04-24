@@ -23,4 +23,7 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 int InitSDL(SDL_Window** window, SDL_Renderer** renderer,
 		const int width, const int height);
 
+int Initialize(SDL_Window** window, SDL_Renderer** renderer,
+		const int width, const int height, char* argv[]);
+
 #endif // OPENHYDORAH_INIT_H

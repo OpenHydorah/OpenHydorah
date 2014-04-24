@@ -15,29 +15,19 @@ You should have received a copy of the GNU General Public License
 along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
 #include <SDL.h>
 #include "init.h"
 #include "cleanup.h"
 
-#ifdef _WIN32
-int CALLBACK WinMain(
-		HINSTANCE hInst,
-		HINSTANCE hPrevInst,
-		LPSTR lpCmdLine,
-		int nCmdShow)
-#else
 int main(int argc, char* argv[])
-#endif
 {
 	SDL_Window* window = NULL;
 	SDL_Renderer* renderer = NULL;
 
-	if (InitSDL(&window, &renderer, 600, 480) != 0) {
-		CleanSDL(window, renderer);
+	if (Initialize(&window, &renderer,
+				600, 480, argv
+				) != 0)
+	{
 		return 1;
 	}
 
@@ -55,7 +45,7 @@ int main(int argc, char* argv[])
 		SDL_RenderPresent(renderer);
 	}
 
-	CleanSDL(window, renderer);
+	Cleanup(window, renderer);
 
 	return 0;
 }
