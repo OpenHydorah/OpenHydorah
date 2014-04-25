@@ -6,7 +6,7 @@ include_directories(include)
 file (GLOB SRC src/*.c src/init/*.c)
 
 add_executable(hydorah ${SRC})
-target_link_libraries(hydorah jansson-2.6)
+target_link_libraries(hydorah jansson)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 	if (NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/assets)
