@@ -34,6 +34,7 @@ Animation* CreateAnimation(void)
 	animation->name = NULL;
 	animation->frames = NULL;
 	animation->next = NULL;
+	animation->start = NULL;
 
 	return animation;
 }
@@ -154,4 +155,6 @@ Animation* CreateAnimationFromJSON(json_t* root, Frame* frames)
 			animation->start = animation->frames;
 		}
 	}
+
+	return animation;
 }
