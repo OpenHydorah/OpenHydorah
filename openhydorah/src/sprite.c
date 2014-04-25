@@ -206,3 +206,10 @@ void DestroySprite(void* sprite)
 	free(spr->frames);
 	free(spr);
 }
+
+void DrawSprite(Sprite* sprite, SDL_Renderer* renderer)
+{
+	Texture* tex = sprite->texture->ptr;
+
+	SDL_RenderCopy(renderer, tex, &(sprite->frames->rect), NULL);
+}

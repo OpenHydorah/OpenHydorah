@@ -38,4 +38,6 @@ RefPtr GetSprite(const char* filename);
 
 void DestroySprite(void* sprite);
 
+void DrawSprite(Sprite* sprite, SDL_Renderer* renderer);
+
 #endif // OPENHYDORAH_SPRITE_H

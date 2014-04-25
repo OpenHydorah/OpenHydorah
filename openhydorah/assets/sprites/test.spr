@@ -4,8 +4,8 @@
 		<frame>
 			<x>0</x>
 			<y>0</y>
-			<width>20</width>
-			<height>20</height>
+			<width>200</width>
+			<height>200</height>
 		</frame>
 	</frames>
 </sprite>
