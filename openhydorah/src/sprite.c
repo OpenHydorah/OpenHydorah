@@ -36,7 +36,7 @@ Sprite* CreateSprite(void)
 		return NULL;
 	}
 
-	sprite->img = NULL;
+	sprite->texture = NULL;
 	sprite->frames = NULL;
 	sprite->numFrames = 0;
 
@@ -88,9 +88,7 @@ void FillSpriteWithXML(Sprite* sprite, xmlNodePtr root)
 		{
 			if (xmlStrEqual(iter->parent->name, "img") == 1)
 			{
-				size_t size = xmlStrlen(iter->content);
-				sprite->img = malloc(size + 1);
-				strcpy(sprite->img, iter->content);
+				sprite->texture = GetTexture(iter->content);
 			}
 		}
 		else if (iter->type == XML_ELEMENT_NODE)

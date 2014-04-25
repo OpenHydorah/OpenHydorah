@@ -20,6 +20,7 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <SDL.h>
 #include <stdint.h>
+#include "texture.h"
 
 typedef struct SFrame {
 	SDL_Rect rect;
@@ -27,7 +28,7 @@ typedef struct SFrame {
 } Frame;
 
 typedef struct {
-	char* img;
+	RefPtr texture;
 	Frame* frames;
 	uint32_t numFrames;
 } Sprite;

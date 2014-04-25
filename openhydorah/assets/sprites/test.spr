@@ -1,5 +1,5 @@
 <sprite>
-	<img>/graphics/sprites/astroids.png</img>
+	<img>/graphics/sprites/asteroids.png</img>
 	<frames>
 		<frame>
 			<x>0</x>
