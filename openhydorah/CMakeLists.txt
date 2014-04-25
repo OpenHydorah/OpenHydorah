@@ -1,6 +1,3 @@
-cmake_minimum_required(VERSION 2.8)
-project (OpenHydorah)
-
 option (BUILD_TESTS "Build tests" ON)
 
 set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
@@ -9,6 +6,7 @@ include_directories(include)
 file (GLOB SRC src/*.c src/init/*.c)
 
 add_executable(hydorah ${SRC})
+target_link_libraries(hydorah jansson-2.6)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 	if (NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/assets)
