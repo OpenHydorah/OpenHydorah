@@ -24,8 +24,22 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 
 typedef SDL_Texture Texture;
 
-RefPtr GetTexture(const char* filename);
+typedef struct STextureList {
+	Texture* texture;
+	char* name;
+	struct STextureList* next;
+} TextureList;
 
-void DestroyTexture(void* texture);
+TextureList* CreateTextureList(void);
+
+void AddTextureToList(TextureList** list, const char* name, Texture* texture);
+
+Texture* GetTextureFromList(TextureList* list, const char* name);
+
+Texture* GetTexture(const char* filename);
+
+void DestroyTexture(Texture* texture);
+
+void DestroyTextureList(TextureList* list);
 
 #endif // OPENHYDORAH_TEXTURE_H
