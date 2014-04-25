@@ -52,7 +52,7 @@ RefPtr GetTexture(const char* filename)
 					);
 			return NULL;
 		}
-		SDL_Log("Reading texture - %s", filename);
+		SDL_Log("Reading texture - %s - size: %i", filename,fileLength);
 		PHYSFS_read(file, buf, 1, fileLength);
 		PHYSFS_close(file);
 		SDL_RWops* ops = SDL_RWFromMem(buf, fileLength);

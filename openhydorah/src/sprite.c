@@ -130,8 +130,6 @@ RefPtr GetSprite(const char* filename)
 	RefPtr refPtr = GetFromDict(g_sprites, filename);
 	if (refPtr != NULL) return CopyRefPtr(refPtr);
 
-	SDL_Log("Reading sprite - %s", filename);
-
 	PHYSFS_File* file = NULL;
 	PHYSFS_sint64 fileLength = 0;
 	uint8_t* buf = NULL;
@@ -161,6 +159,7 @@ RefPtr GetSprite(const char* filename)
 	}
 
 	fileLength = PHYSFS_fileLength(file);
+	SDL_Log("Reading sprite - %s - size: %i", filename, fileLength);
 	buf = malloc(fileLength);
 	PHYSFS_read(file, buf, 1, fileLength);
 	PHYSFS_close(file);
