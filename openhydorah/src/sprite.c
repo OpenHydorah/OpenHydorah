@@ -23,9 +23,6 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
-#include "dictionary.h"
-
-Dictionary* g_sprites = NULL;
 
 Sprite* CreateSprite(void)
 {
@@ -126,10 +123,7 @@ void FillSpriteWithXML(Sprite* sprite, xmlNodePtr root)
 
 RefPtr GetSprite(const char* filename)
 {
-	SDL_Log("Getting sprite - %s", filename);
-	RefPtr refPtr = GetFromDict(g_sprites, filename);
-	if (refPtr != NULL) return CopyRefPtr(refPtr);
-
+	RefPtr refPtr = NULL;
 	PHYSFS_File* file = NULL;
 	PHYSFS_sint64 fileLength = 0;
 	uint8_t* buf = NULL;
@@ -198,23 +192,18 @@ RefPtr GetSprite(const char* filename)
 	xmlCleanupParser();
 
 	refPtr = CreateRefPtr(sprite, DestroySprite);
-	AddToDictionary(&g_sprites, filename, refPtr);
 
-	return CopyRefPtr(refPtr);
+	return refPtr;
 }
 
 void DestroyFrames(Frame* frames)
 {
-	Frame* iter = NULL;
-	while (iter != frames)
+	while (frames != NULL)
 	{
-		iter = frames;
-		while (iter->next != NULL)
-		{
-			iter = iter->next;
-		}
-		free (iter->name);
-		free (iter);
+		Frame* tempIter = frames;
+		frames = frames->next;
+		free(tempIter->name);
+		free(tempIter);
 	}
 }
 
