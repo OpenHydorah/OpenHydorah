@@ -24,7 +24,7 @@ RefPtr CreateRefPtr(void* ptr, void(*DestroyFunc)(void*))
 	RefPtr refPtr = malloc(sizeof(struct SRefPtr));
 	refPtr->ptr = ptr;
 	refPtr->DestroyFunc = DestroyFunc;
-	refPtr->refCount = 0;
+	refPtr->refCount = 1;
 	refPtr->refSource = refPtr;
 
 	return refPtr;
