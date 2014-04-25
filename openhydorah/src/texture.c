@@ -21,50 +21,46 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 #include <string.h>
 #include <physfs.h>
 
-Dictionary* g_textures = NULL;
-
 RefPtr GetTexture(const char* filename)
 {
-	SDL_Log("Getting texture - %s", filename);
-	RefPtr tex = GetFromDict(g_textures, filename);
+	RefPtr tex = NULL;
+	PHYSFS_File* file = NULL;
+	PHYSFS_sint64 fileLength = 0;
+	uint8_t* buf = NULL;
+	SDL_RWops* ops = NULL;
 
-	if (tex == NULL)
+	if (PHYSFS_exists(filename) == 0)
 	{
-		if (PHYSFS_exists(filename) == 0)
-		{
-			SDL_LogWarn(
-					SDL_LOG_CATEGORY_APPLICATION,
-					"Could not find texture '%s'",
-					filename
-					);
-			return NULL;
-		}
-
-		PHYSFS_File* file = PHYSFS_openRead(filename);
-		PHYSFS_sint64 fileLength = PHYSFS_fileLength(file);
-		uint8_t* buf = malloc(fileLength);
-		if (buf == NULL)
-		{
-			SDL_LogError(
-					SDL_LOG_CATEGORY_SYSTEM,
-					"Failed to allocate data for texture '%s'",
-					filename
-					);
-			return NULL;
-		}
-		SDL_Log("Reading texture - %s - size: %i", filename,fileLength);
-		PHYSFS_read(file, buf, 1, fileLength);
-		PHYSFS_close(file);
-		SDL_RWops* ops = SDL_RWFromMem(buf, fileLength);
-		tex = CreateRefPtr(IMG_LoadTexture_RW(g_renderer,ops,0),
-				DestroyTexture);
-		free(buf);
-		SDL_RWclose(ops);
-
-		AddToDictionary(&g_textures, filename, tex);
+		SDL_LogWarn(
+				SDL_LOG_CATEGORY_APPLICATION,
+				"Could not find texture '%s'",
+				filename
+				);
+		return NULL;
 	}
 
-	return CopyRefPtr(tex);
+	file = PHYSFS_openRead(filename);
+	fileLength = PHYSFS_fileLength(file);
+	buf = malloc(fileLength);
+	if (buf == NULL)
+	{
+		SDL_LogError(
+				SDL_LOG_CATEGORY_SYSTEM,
+				"Failed to allocate data for texture '%s'",
+				filename
+				);
+		return NULL;
+	}
+	SDL_Log("Reading texture - %s - size: %i", filename,fileLength);
+	PHYSFS_read(file, buf, 1, fileLength);
+	PHYSFS_close(file);
+	ops = SDL_RWFromMem(buf, fileLength);
+	tex = CreateRefPtr(IMG_LoadTexture_RW(g_renderer,ops,0),
+			DestroyTexture);
+	free(buf);
+	SDL_RWclose(ops);
+
+	return tex;
 }
 
 void DestroyTexture(void* texture)
