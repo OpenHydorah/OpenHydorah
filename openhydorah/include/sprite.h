@@ -22,6 +22,7 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdint.h>
 #include "texture.h"
 #include "refptr.h"
+#include "dictionary.h"
 
 typedef struct SFrame {
 	char* name;
@@ -35,7 +36,7 @@ typedef struct {
 	uint32_t numFrames;
 } Sprite;
 
-RefPtr GetSprite(const char* filename);
+RefPtr GetSprite(const char* filename, Dictionary** textures);
 
 void DestroySprite(void* sprite);
 

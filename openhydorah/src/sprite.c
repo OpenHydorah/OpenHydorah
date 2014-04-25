@@ -123,7 +123,7 @@ int HandleFrame(Frame* frame, json_t* root)
 	return 0;
 }
 
-int FillSprite(Sprite* sprite, json_t* root)
+int FillSprite(Sprite* sprite, json_t* root, Dictionary** textures)
 {
 	json_t* frames = NULL;
 	json_t* img = NULL;
@@ -148,7 +148,12 @@ int FillSprite(Sprite* sprite, json_t* root)
 		json_decref(root);
 		return 1;
 	}
-	sprite->texture = GetTexture(json_string_value(img));
+	sprite->texture = GetFromDict(*textures, json_string_value(img));
+	if (sprite->texture == NULL)
+	{
+		sprite->texture = GetTexture(json_string_value(img));
+		AddToDictionary(textures, json_string_value(img), sprite->texture);
+	}
 
 	frames = json_object_get(root, "frames");
 	if (!json_is_array(frames))
@@ -194,7 +199,7 @@ int FillSprite(Sprite* sprite, json_t* root)
 	return 0;
 }
 
-RefPtr GetSprite(const char* filename)
+RefPtr GetSprite(const char* filename, Dictionary** textures)
 {
 	RefPtr refPtr = NULL;
 	PHYSFS_File* file = NULL;
@@ -252,7 +257,7 @@ RefPtr GetSprite(const char* filename)
 		return NULL;
 	}
 
-	if (FillSprite(sprite, rootNode) != 0)
+	if (FillSprite(sprite, rootNode, textures) != 0)
 	{
 		return NULL;
 	}
