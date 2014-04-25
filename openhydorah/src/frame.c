@@ -121,3 +121,16 @@ Frame* CreateFrameFromJSON(json_t* root)
 
 	return frame;
 }
+
+Frame* FindFrameByName(Frame* frames, const char* name)
+{
+	while (frames != NULL)
+	{
+		if (strcmp(frames, name) == 0)
+			break;
+
+		frames = frames->next;
+	}
+
+	return frames;
+}
