@@ -52,6 +52,7 @@ Sprite* CreateSpriteFromJSON(json_t* root, Dictionary** textures)
 	json_t* img = NULL;
 	uint32_t i = 0;
 	Sprite* sprite = NULL;
+	RefPtr tex = NULL;
 
 	if (!json_is_object(root))
 	{
@@ -74,12 +75,15 @@ Sprite* CreateSpriteFromJSON(json_t* root, Dictionary** textures)
 		json_decref(root);
 		return NULL;
 	}
-	sprite->texture = GetFromDict(*textures, json_string_value(img));
-	if (sprite->texture == NULL)
+	tex = GetFromDict(*textures, json_string_value(img));
+	if (tex == NULL)
 	{
-		sprite->texture = GetTexture(json_string_value(img));
-		AddToDictionary(textures, json_string_value(img), sprite->texture);
+		tex = GetTexture(json_string_value(img));
+		AddToDictionary(textures, json_string_value(img), tex);
+		sprite->texture = CopyRefPtr(tex);
 	}
+	else
+		sprite->texture = CopyRefPtr(tex);
 
 	frames = json_object_get(root, "frames");
 	if (!json_is_array(frames))
