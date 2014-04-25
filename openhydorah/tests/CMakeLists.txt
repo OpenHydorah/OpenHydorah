@@ -1,4 +1,4 @@
-file(GLOB SRC tests_main.c ../src/refptr.c)
+set(SRC tests_main.c ../src/refptr.c ../src/dictionary.c)
 
 add_executable(hydorah_tests ${SRC})
 
