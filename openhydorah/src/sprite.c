@@ -156,7 +156,31 @@ Sprite* CreateSpriteFromJSON(json_t* root, Dictionary** textures)
 		}
 	}
 
-	sprite->currentFrame = sprite->frames;
+	currentFrame = json_object_get(root, "default_frame");
+	if (!json_is_string(currentFrame))
+	{
+		SDL_LogWarn(
+			SDL_LOG_CATEGORY_APPLICATION,
+			"No default_frame for sprite\n"
+			);
+
+		sprite->currentFrame = sprite->frames;
+	}
+	else
+	{
+		sprite->currentFrame = FindFrameByName(sprite->frames,
+				json_string_value(currentFrame));
+		if (sprite->currentFrame == NULL)
+		{
+			SDL_LogWarn(
+				SDL_LOG_CATEGORY_APPLICATION,
+				"Could not find frame '%s' for default_frame, for sprite\n",
+				json_string_value(currentFrame)
+				);
+
+			sprite->currentFrame = sprite->frames;
+		}
+	}
 
 	return sprite;
 }
