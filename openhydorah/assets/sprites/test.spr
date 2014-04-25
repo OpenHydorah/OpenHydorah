@@ -2,6 +2,7 @@
 	<img>/graphics/sprites/asteroids.png</img>
 	<frames>
 		<frame>
+			<name>idle</name>
 			<x>0</x>
 			<y>0</y>
 			<width>200</width>

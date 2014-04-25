@@ -24,6 +24,7 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 #include "refptr.h"
 
 typedef struct SFrame {
+	char* name;
 	SDL_Rect rect;
 	struct SFrame* next;
 } Frame;

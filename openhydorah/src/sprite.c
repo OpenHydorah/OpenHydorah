@@ -57,7 +57,13 @@ void HandleFrame(Frame* frame, xmlNodePtr root)
 		}
 		else if (iter->type == XML_TEXT_NODE)
 		{
-			if (xmlStrEqual(iter->parent->name, "x"))
+			if (xmlStrEqual(iter->parent->name, "name"))
+			{
+				size_t size = xmlStrlen(iter->content);
+				frame->name = malloc(size);
+				strcpy(frame->name, iter->content);
+			}
+			else if (xmlStrEqual(iter->parent->name, "x"))
 			{
 				frame->rect.x = atoi(iter->content);
 			}
@@ -102,6 +108,7 @@ void FillSpriteWithXML(Sprite* sprite, xmlNodePtr root)
 				while (*frame != NULL)
 					frame = &((*frame)->next);
 				(*frame) = malloc(sizeof(Frame));
+				(*frame)->name = NULL;
 				(*frame)->next = NULL;
 
 				HandleFrame(*frame, iter);
@@ -197,13 +204,28 @@ RefPtr GetSprite(const char* filename)
 	return CopyRefPtr(refPtr);
 }
 
+void DestroyFrames(Frame* frames)
+{
+	Frame* iter = NULL;
+	while (iter != frames)
+	{
+		iter = frames;
+		while (iter->next != NULL)
+		{
+			iter = iter->next;
+		}
+		free (iter->name);
+		free (iter);
+	}
+}
+
 void DestroySprite(void* sprite)
 {
 	SDL_Log("Destroying sprite");
 	Sprite* spr = sprite;
 
 	DestroyRefPtr(&(spr->texture));
-	free(spr->frames);
+	DestroyFrames(spr->frames);
 	free(spr);
 }
 
