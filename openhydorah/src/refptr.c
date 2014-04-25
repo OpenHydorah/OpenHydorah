@@ -33,7 +33,7 @@ RefPtr CreateRefPtr(void* ptr, void(*DestroyFunc)(void*))
 RefPtr CopyRefPtr(RefPtr ptr)
 {
 	RefPtr refPtr = malloc(sizeof(struct SRefPtr));
-	refPtr->ptr = ptr->ptr;
+	refPtr->ptr = ptr->refSource->ptr;
 	refPtr->DestroyFunc = NULL;
 	refPtr->refCount = 0;
 	ptr->refSource->refCount += 1;
@@ -50,6 +50,7 @@ void DestroyRefPtr(RefPtr* ptr)
 		if ((*ptr)->refSource->refCount <= 0)
 		{
 			(*ptr)->refSource->DestroyFunc((*ptr)->refSource->ptr);
+			(*ptr)->refSource->ptr = NULL;
 		}
 	}
 
