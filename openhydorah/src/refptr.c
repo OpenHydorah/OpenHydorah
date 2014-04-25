@@ -46,12 +46,10 @@ void DestroyRefPtr(RefPtr* ptr)
 {
 	if ((*ptr)->refSource != NULL)
 	{
-		if ((*ptr)->refSource->refCount == 0)
+		(*ptr)->refSource->refCount -= 1;
+		if ((*ptr)->refSource->refCount <= 0)
 		{
 			(*ptr)->refSource->DestroyFunc((*ptr)->refSource->ptr);
-		}
-		else {
-			(*ptr)->refSource->refCount -= 1;
 		}
 	}
 
