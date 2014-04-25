@@ -121,7 +121,7 @@ RefPtr GetSprite(const char* filename)
 {
 	SDL_Log("Getting sprite - %s", filename);
 	RefPtr refPtr = GetFromDict(g_sprites, filename);
-	if (refPtr != NULL) return refPtr;
+	if (refPtr != NULL) return CopyRefPtr(refPtr);
 
 	SDL_Log("Reading sprite - %s", filename);
 
