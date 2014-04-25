@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 project (OpenHydorah)
 
+option (BUILD_TESTS "Build tests" ON)
+
 set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 
 include_directories(include)
@@ -56,4 +58,8 @@ if (${LIBXML2_FOUND})
 	include_directories(${LIBXML2_INCLUDE_DIR})
 	target_link_libraries(hydorah ${LIBXML2_LIBRARIES})
 	add_definitions(${LIBXML2_DEFINITIONS})
+endif ()
+
+if (${BUILD_TESTS})
+	add_subdirectory("tests")
 endif ()
