@@ -57,13 +57,15 @@ Frame* CreateFrameFromJSON(json_t* root)
 	{
 		SDL_LogError(
 			SDL_LOG_CATEGORY_APPLICATION,
-			"Could not find name for object.\n"
+			"Could not find name for frame.\n"
 		);
 
 		return NULL;
 	}
 
 	frame = CreateFrame();
+	if (frame == NULL)
+		return NULL;
 
 	size_t size = strlen(json_string_value(name));
 	frame->name = malloc(size);
