@@ -35,15 +35,15 @@ START_TEST (test_ref_counting)
 		refs[i] = CopyRefPtr(main);
 	}
 
-	ck_assert_int_eq(main->refSource->refCount, n);
-	ck_assert_int_eq(refs[0]->refSource->refCount, n);
+	ck_assert_int_eq(main->refSource->refCount, n+1);
+	ck_assert_int_eq(refs[0]->refSource->refCount, n+1);
 
 	DestroyRefPtr(&refs[n-1]);
 	DestroyRefPtr(&refs[n-2]);
 	DestroyRefPtr(&refs[n-3]);
 
-	ck_assert_int_eq(main->refSource->refCount, n-3);
-	ck_assert_int_eq(refs[0]->refSource->refCount, n-3);
+	ck_assert_int_eq(main->refSource->refCount, n-2);
+	ck_assert_int_eq(refs[0]->refSource->refCount, n-2);
 
 END_TEST
 
@@ -58,7 +58,7 @@ START_TEST (test_ref_pointer)
 	ck_assert_ptr_eq(copy->ptr, copy->refSource->ptr);
 
 	DestroyRefPtr(&copy);
-	ck_assert_ptr_eq(main->ptr, NULL);
+	DestroyRefPtr(&main);
 END_TEST
 
 Suite* refptr_suite (void)
