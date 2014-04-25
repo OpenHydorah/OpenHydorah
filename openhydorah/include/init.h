@@ -26,7 +26,6 @@ int InitSDL(SDL_Window** window, SDL_Renderer** renderer,
 
 int InitFS(const char* arg0);
 
-int Initialize(SDL_Window** window, SDL_Renderer** renderer,
-		const int width, const int height, char* argv[]);
+int Initialize(const int width, const int height, char* argv[]);
 
 #endif // OPENHYDORAH_INIT_H

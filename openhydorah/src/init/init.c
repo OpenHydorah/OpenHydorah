@@ -17,12 +17,12 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "init.h"
 #include "cleanup.h"
+#include "globals.h"
 
-int Initialize(SDL_Window** window, SDL_Renderer** renderer,
-		const int width, const int height, char* argv[])
+int Initialize(const int width, const int height, char* argv[])
 {
-	if (InitSDL(window, renderer, width, height) != 0) {
-		CleanSDL(*window, *renderer);
+	if (InitSDL(&g_window, &g_renderer, width, height) != 0) {
+		CleanSDL(g_window, g_renderer);
 		return 1;
 	}
 
