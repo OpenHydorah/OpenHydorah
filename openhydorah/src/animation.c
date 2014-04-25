@@ -116,7 +116,13 @@ Animation* CreateAnimationFromJSON(json_t* root, Frame* frames)
 				while (*fIter2 != NULL)
 					fIter2 = &((*fIter2)->next);
 
-				(*fIter2) = fIter;
+				(*fIter2) = malloc(sizeof(Frame));
+				(*fIter2)->rect = fIter->rect;
+				size_t size = strlen(fIter->name);
+				(*fIter2)->name = malloc(sizeof(size));
+				strcpy((*fIter2)->name, fIter->name);
+				(*fIter2)->next = NULL;
+				break;
 			}
 
 			fIter = fIter->next;
