@@ -28,7 +28,7 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 #include <jansson.h>
 
 typedef struct {
-	RefPtr texture;
+	Texture* texture;
 	Frame* frames;
 	Animation* animations;
 	uint32_t numFrames;
@@ -38,9 +38,9 @@ typedef struct {
 
 Sprite* CreateSprite(void);
 
-Sprite* CreateSpriteFromJSON(json_t* root, Dictionary** textures);
+Sprite* CreateSpriteFromJSON(json_t* root, TextureList** textures);
 
-RefPtr GetSprite(const char* filename, Dictionary** textures);
+RefPtr GetSprite(const char* filename, TextureList** textures);
 
 void DestroySprite(void* sprite);
 

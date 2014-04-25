@@ -44,7 +44,7 @@ Sprite* CreateSprite(void)
 	return sprite;
 }
 
-Sprite* CreateSpriteFromJSON(json_t* root, Dictionary** textures)
+Sprite* CreateSpriteFromJSON(json_t* root, TextureList** textures)
 {
 	json_t* frames = NULL;
 	json_t* currentFrame = NULL;
@@ -52,7 +52,6 @@ Sprite* CreateSpriteFromJSON(json_t* root, Dictionary** textures)
 	json_t* img = NULL;
 	uint32_t i = 0;
 	Sprite* sprite = NULL;
-	RefPtr tex = NULL;
 
 	if (!json_is_object(root))
 	{
@@ -75,15 +74,12 @@ Sprite* CreateSpriteFromJSON(json_t* root, Dictionary** textures)
 		json_decref(root);
 		return NULL;
 	}
-	tex = GetFromDict(*textures, json_string_value(img));
-	if (tex == NULL)
+	sprite->texture = GetTextureFromList(*textures, json_string_value(img));
+	if (sprite->texture == NULL)
 	{
-		tex = GetTexture(json_string_value(img));
-		AddToDictionary(textures, json_string_value(img), tex);
-		sprite->texture = CopyRefPtr(tex);
+		sprite->texture = GetTexture(json_string_value(img));
+		AddTextureToList(textures, json_string_value(img), sprite->texture);
 	}
-	else
-		sprite->texture = CopyRefPtr(tex);
 
 	frames = json_object_get(root, "frames");
 	if (!json_is_array(frames))
@@ -189,7 +185,7 @@ Sprite* CreateSpriteFromJSON(json_t* root, Dictionary** textures)
 	return sprite;
 }
 
-RefPtr GetSprite(const char* filename, Dictionary** textures)
+RefPtr GetSprite(const char* filename, TextureList** textures)
 {
 	RefPtr refPtr = NULL;
 	PHYSFS_File* file = NULL;
@@ -270,7 +266,6 @@ void DestroySprite(void* sprite)
 	SDL_Log("Destroying sprite");
 	Sprite* spr = sprite;
 
-	DestroyRefPtr(&(spr->texture));
 	DestroyFrames(spr->frames);
 	free(spr);
 }
@@ -282,9 +277,9 @@ void DrawSprite(RefPtr spriteRef, SDL_Renderer* renderer)
 	Sprite* sprite = spriteRef->ptr;
 
 	if (sprite == NULL || sprite->texture == NULL ||
-			sprite->texture->ptr == NULL || sprite->frames == NULL)
+			sprite->frames == NULL)
 		return;
-	Texture* tex = sprite->texture->ptr;
+	Texture* tex = sprite->texture;
 
 	SDL_Rect rect;
 	rect.x = 0;
