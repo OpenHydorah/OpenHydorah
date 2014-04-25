@@ -33,6 +33,7 @@ typedef struct {
 	Animation* animations;
 	uint32_t numFrames;
 	uint32_t numAnimations;
+	Frame* currentFrame;
 } Sprite;
 
 Sprite* CreateSprite(void);

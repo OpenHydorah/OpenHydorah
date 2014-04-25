@@ -39,6 +39,7 @@ Sprite* CreateSprite(void)
 	sprite->numFrames = 0;
 	sprite->animations = NULL;
 	sprite->numAnimations = 0;
+	sprite->currentFrame = NULL;
 
 	return sprite;
 }
@@ -46,6 +47,7 @@ Sprite* CreateSprite(void)
 Sprite* CreateSpriteFromJSON(json_t* root, Dictionary** textures)
 {
 	json_t* frames = NULL;
+	json_t* currentFrame = NULL;
 	json_t* animations = NULL;
 	json_t* img = NULL;
 	uint32_t i = 0;
@@ -154,6 +156,8 @@ Sprite* CreateSpriteFromJSON(json_t* root, Dictionary** textures)
 		}
 	}
 
+	sprite->currentFrame = sprite->frames;
+
 	return sprite;
 }
 
@@ -254,5 +258,14 @@ void DrawSprite(RefPtr spriteRef, SDL_Renderer* renderer)
 		return;
 	Texture* tex = sprite->texture->ptr;
 
-	SDL_RenderCopy(renderer, tex, &(sprite->frames->rect), NULL);
+	SDL_Rect rect;
+	rect.x = 0;
+	rect.y = 0;
+	rect.w = sprite->currentFrame->rect.w;
+	rect.h = sprite->currentFrame->rect.h;
+	SDL_RenderCopy(renderer, tex, &(sprite->currentFrame->rect), &rect);
+
+	sprite->currentFrame = sprite->currentFrame->next;
+	if (sprite->currentFrame == NULL)
+		sprite->currentFrame = sprite->frames;
 }
