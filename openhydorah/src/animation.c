@@ -89,12 +89,11 @@ Animation* CreateAnimationFromJSON(json_t* root, Frame* frames)
 		return NULL;
 	}
 
-	Frame** fIter2 = &animation->frames;
+	Frame** fIter = &animation->frames;
 	for (i = 0; i < json_array_size(frameNodes); i++)
 	{
 		json_t* frame = NULL;
-		Frame* fIter = NULL;
-		int found = 0;
+		Frame* foundFrame = NULL;
 
 		frame = json_array_get(frameNodes, i);
 		if (!json_is_string(frame))
@@ -107,28 +106,20 @@ Animation* CreateAnimationFromJSON(json_t* root, Frame* frames)
 			continue;
 		}
 
-		fIter = frames;
-		while (fIter != NULL)
+		foundFrame = FindFrameByName(frames, json_string_value(frame));
+		if (foundFrame != NULL)
 		{
-			if (strcmp(fIter->name, json_string_value(frame)) == 0)
-			{
-				found = 1;
-				while (*fIter2 != NULL)
-					fIter2 = &((*fIter2)->next);
+			while (*fIter != NULL)
+				fIter = &((*fIter)->next);
 
-				(*fIter2) = malloc(sizeof(Frame));
-				(*fIter2)->rect = fIter->rect;
-				size_t size = strlen(fIter->name);
-				(*fIter2)->name = malloc(sizeof(size));
-				strcpy((*fIter2)->name, fIter->name);
-				(*fIter2)->next = NULL;
-				break;
-			}
-
-			fIter = fIter->next;
+			(*fIter) = malloc(sizeof(Frame));
+			(*fIter)->rect = foundFrame->rect;
+			size_t size = strlen(foundFrame->name);
+			(*fIter)->name = malloc(sizeof(size));
+			strcpy((*fIter)->name, foundFrame->name);
+			(*fIter)->next = NULL;
 		}
-
-		if (found == 0)
+		else
 		{
 			SDL_LogWarn(
 					SDL_LOG_CATEGORY_APPLICATION,
