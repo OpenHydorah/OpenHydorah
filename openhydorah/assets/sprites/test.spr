@@ -1,12 +1,12 @@
-<sprite>
-	<img>/graphics/sprites/asteroids.png</img>
-	<frames>
-		<frame>
-			<name>idle</name>
-			<x>0</x>
-			<y>0</y>
-			<width>200</width>
-			<height>200</height>
-		</frame>
-	</frames>
-</sprite>
+{
+	"img":"/graphics/sprites/asteroids.png",
+	"frames": [
+		{
+			"name": "idle",
+			"x": 0.0,
+			"y": 0.0,
+			"width": 200.0,
+			"height": 200.0
+		}
+	]
+}
