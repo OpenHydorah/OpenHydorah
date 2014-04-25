@@ -53,13 +53,6 @@ if (${PNG_FOUND})
 	add_definitions(${PNG_DEFINITIONS})
 endif ()
 
-find_package(LibXml2 REQUIRED)
-if (${LIBXML2_FOUND})
-	include_directories(${LIBXML2_INCLUDE_DIR})
-	target_link_libraries(hydorah ${LIBXML2_LIBRARIES})
-	add_definitions(${LIBXML2_DEFINITIONS})
-endif ()
-
 if (${BUILD_TESTS})
 	add_subdirectory("tests")
 endif ()
