@@ -40,6 +40,7 @@ Sprite* CreateSprite(void)
 	sprite->animations = NULL;
 	sprite->numAnimations = 0;
 	sprite->currentFrame = NULL;
+	sprite->activeAnimation = NULL;
 
 	return sprite;
 }
@@ -288,7 +289,10 @@ void DrawSprite(RefPtr spriteRef, SDL_Renderer* renderer)
 	rect.h = sprite->currentFrame->rect.h;
 	SDL_RenderCopy(renderer, tex, &(sprite->currentFrame->rect), &rect);
 
-	sprite->currentFrame = sprite->currentFrame->next;
-	if (sprite->currentFrame == NULL)
-		sprite->currentFrame = sprite->frames;
+	if (sprite->activeAnimation != NULL)
+	{
+		sprite->currentFrame = sprite->currentFrame->next;
+		if (sprite->currentFrame == NULL)
+			sprite->currentFrame = sprite->activeAnimation->frames;
+	}
 }
