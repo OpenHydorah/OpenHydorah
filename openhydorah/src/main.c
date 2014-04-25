@@ -19,18 +19,21 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 #include "init.h"
 #include "cleanup.h"
 #include "sprite.h"
+#include "texture.h"
+#include "refptr.h"
+#include "globals.h"
+#include "dictionary.h"
 
 int main(int argc, char* argv[])
 {
-	SDL_Window* window = NULL;
-	SDL_Renderer* renderer = NULL;
-
-	if (Initialize(&window, &renderer,
-				600, 480, argv
-				) != 0)
+	if (Initialize(600, 480, argv) != 0)
 	{
 		return 1;
 	}
+
+	TextureList* textures = NULL;
+
+	RefPtr asteroid_big = GetSprite("/sprites/asteroid_big.spr", &textures);
 
 	int running = 1;
 	while (running)
@@ -40,13 +43,32 @@ int main(int argc, char* argv[])
 		{
 			if (event.type == SDL_QUIT)
 				running = 0;
+			else if (event.type == SDL_KEYDOWN &&
+					event.key.keysym.scancode == SDL_SCANCODE_D)
+			{
+				Sprite* spr = asteroid_big->ptr;
+				if (spr->activeAnimation == NULL)
+				{
+					spr->currentFrame = spr->animations->start;
+					spr->activeAnimation = spr->animations;
+				}
+				else
+					spr->activeAnimation = NULL;
+			}
 		}
 
-		SDL_RenderClear(renderer);
-		SDL_RenderPresent(renderer);
+		SDL_RenderClear(g_renderer);
+
+		DrawSprite(asteroid_big, g_renderer);
+		
+		SDL_RenderPresent(g_renderer);
 	}
 
-	Cleanup(window, renderer);
+	DestroyRefPtr(&asteroid_big);
+
+	DestroyTextureList(textures);
+
+	Cleanup(g_window, g_renderer);
 
 	return 0;
 }
