@@ -24,7 +24,15 @@ void AddToDictionary(Dictionary** dict, const char* name, void* data)
 	Dictionary** iter = dict;
 
 	while (*iter != NULL)
+	{
+		if (strcmp((*iter)->name, name) == 0)
+		{
+			free((*iter)->data);
+			(*iter)->data = data;
+			return;
+		}
 		iter = &((*iter)->next);
+	}
 
 	(*iter) = malloc(sizeof(Dictionary));
 	(*iter)->name = malloc(strlen(name));
