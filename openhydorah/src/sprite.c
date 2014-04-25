@@ -37,6 +37,8 @@ Sprite* CreateSprite(void)
 	sprite->texture = NULL;
 	sprite->frames = NULL;
 	sprite->numFrames = 0;
+	sprite->animations = NULL;
+	sprite->numAnimations = 0;
 
 	return sprite;
 }
@@ -44,6 +46,7 @@ Sprite* CreateSprite(void)
 Sprite* CreateSpriteFromJSON(json_t* root, Dictionary** textures)
 {
 	json_t* frames = NULL;
+	json_t* animations = NULL;
 	json_t* img = NULL;
 	uint32_t i = 0;
 	Sprite* sprite = NULL;
@@ -81,7 +84,7 @@ Sprite* CreateSpriteFromJSON(json_t* root, Dictionary** textures)
 	{
 		SDL_LogError(
 			SDL_LOG_CATEGORY_APPLICATION,
-			"Could not find 'img' value\n"
+			"Could not find 'frames' array\n"
 			);
 		json_decref(root);
 		return NULL;
@@ -106,11 +109,49 @@ Sprite* CreateSpriteFromJSON(json_t* root, Dictionary** textures)
 			frame = &((*frame)->next);
 
 		*frame = CreateFrameFromJSON(frameNode);
-		if(frame == NULL)
+		if(*frame == NULL)
 		{
 			continue;
 		}
 		sprite->numFrames += 1;
+	}
+
+	animations = json_object_get(root, "animations");
+	if (!json_is_array(animations))
+	{
+		SDL_LogWarn(
+			SDL_LOG_CATEGORY_APPLICATION,
+			"Could not find 'animations' array\n"
+			);
+	}
+	else
+	{
+		for (i = 0; i < json_array_size(animations); i++)
+		{
+			json_t* animNode;
+
+			animNode = json_array_get(animations, i);
+			if (!json_is_object(animNode))
+			{
+				SDL_LogWarn(
+					SDL_LOG_CATEGORY_APPLICATION,
+					"Animation is invalid JSON type. Expected object.\n"
+				);
+				continue;
+			}
+
+			Animation** anims = &(sprite->animations);
+			Frame* frames = (sprite->frames);
+			while (*anims != NULL)
+				anims = &((*anims)->next);
+
+			*anims = CreateAnimationFromJSON(animNode, frames);
+			if(*anims == NULL)
+			{
+				continue;
+			}
+			sprite->numAnimations += 1;
+		}
 	}
 
 	return sprite;

@@ -24,12 +24,15 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 #include "refptr.h"
 #include "dictionary.h"
 #include "frame.h"
+#include "animation.h"
 #include <jansson.h>
 
 typedef struct {
 	RefPtr texture;
 	Frame* frames;
+	Animation* animations;
 	uint32_t numFrames;
+	uint32_t numAnimations;
 } Sprite;
 
 Sprite* CreateSprite(void);
