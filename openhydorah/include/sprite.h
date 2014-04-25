@@ -21,6 +21,7 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 #include <SDL.h>
 #include <stdint.h>
 #include "texture.h"
+#include "refptr.h"
 
 typedef struct SFrame {
 	SDL_Rect rect;
@@ -33,6 +34,8 @@ typedef struct {
 	uint32_t numFrames;
 } Sprite;
 
-Sprite* LoadSprite(const char* filename);
+RefPtr GetSprite(const char* filename);
+
+void DestroySprite(void* sprite);
 
 #endif // OPENHYDORAH_SPRITE_H
