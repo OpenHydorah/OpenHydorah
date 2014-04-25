@@ -290,8 +290,12 @@ void DestroySprite(void* sprite)
 	free(spr);
 }
 
-void DrawSprite(Sprite* sprite, SDL_Renderer* renderer)
+void DrawSprite(RefPtr spriteRef, SDL_Renderer* renderer)
 {
+	if (spriteRef == NULL || spriteRef->ptr == NULL)
+		return;
+	Sprite* sprite = spriteRef->ptr;
+
 	if (sprite == NULL || sprite->texture == NULL ||
 			sprite->texture->ptr == NULL || sprite->frames == NULL)
 		return;
