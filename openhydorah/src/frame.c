@@ -127,7 +127,7 @@ Frame* FindFrameByName(Frame* frames, const char* name)
 	while (frames != NULL)
 	{
 		if (strcmp(frames->name, name) == 0)
-			break;
+			return frames;
 
 		frames = frames->next;
 	}
