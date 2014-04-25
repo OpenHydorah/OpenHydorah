@@ -23,18 +23,18 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 #include "texture.h"
 #include "refptr.h"
 #include "dictionary.h"
-
-typedef struct SFrame {
-	char* name;
-	SDL_Rect rect;
-	struct SFrame* next;
-} Frame;
+#include "frame.h"
+#include <jansson.h>
 
 typedef struct {
 	RefPtr texture;
 	Frame* frames;
 	uint32_t numFrames;
 } Sprite;
+
+Sprite* CreateSprite(void);
+
+Sprite* CreateSpriteFromJSON(json_t* root, Dictionary** textures);
 
 RefPtr GetSprite(const char* filename, Dictionary** textures);
 

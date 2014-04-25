@@ -21,7 +21,6 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
-#include <jansson.h>
 
 Sprite* CreateSprite(void)
 {
@@ -42,92 +41,12 @@ Sprite* CreateSprite(void)
 	return sprite;
 }
 
-int HandleFrame(Frame* frame, json_t* root)
-{
-	if (!json_is_object(root))
-	{
-		SDL_LogError(
-			SDL_LOG_CATEGORY_APPLICATION,
-			"Frame is invalid JSON type. Expected object.\n"
-		);
-
-		return 1;
-	}
-
-	json_t* name = NULL;
-	json_t *x,*y,*width,*height;
-
-	name = json_object_get(root, "name");
-	if (!json_is_string(name))
-	{
-		SDL_LogError(
-			SDL_LOG_CATEGORY_APPLICATION,
-			"Could not find name for object.\n"
-		);
-
-		return 1;
-	}
-
-	size_t size = strlen(json_string_value(name));
-	frame->name = malloc(size);
-	strcpy(frame->name, json_string_value(name));
-
-	x = json_object_get(root, "x");
-	if (!json_is_integer(x))
-	{
-		SDL_LogWarn(
-				SDL_LOG_CATEGORY_APPLICATION,
-				"Could not get x value for frame '%s'",
-				frame->name
-				);
-	}
-	else
-		frame->rect.x = json_integer_value(x);
-
-	y = json_object_get(root, "y");
-	if (!json_is_integer(y))
-	{
-		SDL_LogWarn(
-				SDL_LOG_CATEGORY_APPLICATION,
-				"Could not get y value for frame '%s'",
-				frame->name
-				);
-	}
-	else
-		frame->rect.y = json_integer_value(y);
-
-	width = json_object_get(root, "width");
-	if (!json_is_integer(width))
-	{
-		SDL_LogWarn(
-				SDL_LOG_CATEGORY_APPLICATION,
-				"Could not get width value for frame '%s'",
-				frame->name
-				);
-	}
-	else
-		frame->rect.w = json_integer_value(width);
-
-	height = json_object_get(root, "height");
-	if (!json_is_integer(height))
-	{
-		SDL_LogWarn(
-				SDL_LOG_CATEGORY_APPLICATION,
-				"Could not get height value for frame '%s'",
-				frame->name
-				);
-	}
-	else
-		frame->rect.h = json_integer_value(height);
-
-	return 0;
-}
-
-int FillSprite(Sprite* sprite, json_t* root, Dictionary** textures)
+Sprite* CreateSpriteFromJSON(json_t* root, Dictionary** textures)
 {
 	json_t* frames = NULL;
 	json_t* img = NULL;
 	uint32_t i = 0;
+	Sprite* sprite = NULL;
 
 	if (!json_is_object(root))
 	{
@@ -135,8 +54,10 @@ int FillSprite(Sprite* sprite, json_t* root, Dictionary** textures)
 				SDL_LOG_CATEGORY_APPLICATION,
 				"Invalid sprite file format\n"
 				);
-		return 1;
+		return NULL;
 	}
+
+	sprite = CreateSprite();
 	
 	img = json_object_get(root, "img");
 	if (!json_is_string(img))
@@ -146,7 +67,7 @@ int FillSprite(Sprite* sprite, json_t* root, Dictionary** textures)
 			"Could not find 'img' value\n"
 			);
 		json_decref(root);
-		return 1;
+		return NULL;
 	}
 	sprite->texture = GetFromDict(*textures, json_string_value(img));
 	if (sprite->texture == NULL)
@@ -163,7 +84,7 @@ int FillSprite(Sprite* sprite, json_t* root, Dictionary** textures)
 			"Could not find 'img' value\n"
 			);
 		json_decref(root);
-		return 1;
+		return NULL;
 	}
 
 	for (i = 0; i < json_array_size(frames); i++)
@@ -183,20 +104,16 @@ int FillSprite(Sprite* sprite, json_t* root, Dictionary** textures)
 		Frame** frame = &(sprite->frames);
 		while (*frame != NULL)
 			frame = &((*frame)->next);
-		(*frame) = malloc(sizeof(Frame));
-		(*frame)->name = NULL;
-		(*frame)->next = NULL;
 
-		if(HandleFrame(*frame, frameNode) != 0)
+		*frame = CreateFrameFromJSON(frameNode);
+		if(frame == NULL)
 		{
-			free(*frame);
-			*frame = NULL;
 			continue;
 		}
 		sprite->numFrames += 1;
 	}
 
-	return 0;
+	return sprite;
 }
 
 RefPtr GetSprite(const char* filename, Dictionary** textures)
@@ -250,14 +167,9 @@ RefPtr GetSprite(const char* filename, Dictionary** textures)
 		return NULL;
 	}
 
-	sprite = CreateSprite();
+	sprite = CreateSpriteFromJSON(rootNode, textures);
 	
 	if (sprite == NULL)
-	{
-		return NULL;
-	}
-
-	if (FillSprite(sprite, rootNode, textures) != 0)
 	{
 		return NULL;
 	}
