@@ -73,7 +73,7 @@ int HandleFrame(Frame* frame, json_t* root)
 	strcpy(frame->name, json_string_value(name));
 
 	x = json_object_get(root, "x");
-	if (!json_is_real(x))
+	if (!json_is_integer(x))
 	{
 		SDL_LogWarn(
 				SDL_LOG_CATEGORY_APPLICATION,
@@ -82,10 +82,10 @@ int HandleFrame(Frame* frame, json_t* root)
 				);
 	}
 	else
-		frame->rect.x = json_real_value(x);
+		frame->rect.x = json_integer_value(x);
 
 	y = json_object_get(root, "y");
-	if (!json_is_real(y))
+	if (!json_is_integer(y))
 	{
 		SDL_LogWarn(
 				SDL_LOG_CATEGORY_APPLICATION,
@@ -94,10 +94,10 @@ int HandleFrame(Frame* frame, json_t* root)
 				);
 	}
 	else
-		frame->rect.y = json_real_value(y);
+		frame->rect.y = json_integer_value(y);
 
 	width = json_object_get(root, "width");
-	if (!json_is_real(width))
+	if (!json_is_integer(width))
 	{
 		SDL_LogWarn(
 				SDL_LOG_CATEGORY_APPLICATION,
@@ -106,10 +106,10 @@ int HandleFrame(Frame* frame, json_t* root)
 				);
 	}
 	else
-		frame->rect.w = json_real_value(width);
+		frame->rect.w = json_integer_value(width);
 
 	height = json_object_get(root, "height");
-	if (!json_is_real(height))
+	if (!json_is_integer(height))
 	{
 		SDL_LogWarn(
 				SDL_LOG_CATEGORY_APPLICATION,
@@ -118,7 +118,7 @@ int HandleFrame(Frame* frame, json_t* root)
 				);
 	}
 	else
-		frame->rect.h = json_real_value(height);
+		frame->rect.h = json_integer_value(height);
 
 	return 0;
 }
