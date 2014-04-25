@@ -53,6 +53,7 @@ Animation* CreateAnimationFromJSON(json_t* root, Frame* frames)
 
 	json_t* name = NULL;
 	json_t* frameNodes = NULL;
+	json_t* start = NULL;
 	Animation* animation = NULL;
 	uint32_t i = 0;
 
@@ -126,6 +127,31 @@ Animation* CreateAnimationFromJSON(json_t* root, Frame* frames)
 					"No frame found for JSON animation frame '%s'",
 					json_string_value(frame)
 					);
+		}
+	}
+
+	start = json_object_get(root, "start");
+	if (!json_is_string(start))
+	{
+		SDL_LogWarn(
+				SDL_LOG_CATEGORY_APPLICATION,
+				"start not found for animation"
+			);
+
+		animation->start = animation->frames;
+	}
+	else
+	{
+		animation->start = FindFrameByName(animation->frames,
+				json_string_value(start));
+		if (animation->start == NULL)
+		{
+			SDL_LogWarn(
+				SDL_LOG_CATEGORY_APPLICATION,
+				"Could not find frame for start, for animation"
+			);
+
+			animation->start = animation->frames;
 		}
 	}
 }

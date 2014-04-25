@@ -24,6 +24,7 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 typedef struct SAnimation {
 	char* name;
 	Frame* frames;
+	Frame* start;
 	struct SAnimation* next;
 } Animation;
 
