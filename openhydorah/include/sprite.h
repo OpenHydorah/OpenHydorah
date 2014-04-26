@@ -45,6 +45,6 @@ RefPtr GetSprite(const char* filename, TextureList** textures);
 
 void DestroySprite(void* sprite);
 
-void DrawSprite(RefPtr spriteRef, SDL_Renderer* renderer);
+void DrawSpriteAtPoint(RefPtr spriteRef, SDL_Point point, SDL_Renderer* renderer);
 
 #endif // OPENHYDORAH_SPRITE_H

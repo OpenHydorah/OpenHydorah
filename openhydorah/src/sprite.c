@@ -271,7 +271,7 @@ void DestroySprite(void* sprite)
 	free(spr);
 }
 
-void DrawSprite(RefPtr spriteRef, SDL_Renderer* renderer)
+void DrawSpriteAtPoint(RefPtr spriteRef, SDL_Point point, SDL_Renderer* renderer)
 {
 	if (spriteRef == NULL || spriteRef->ptr == NULL)
 		return;
@@ -283,8 +283,8 @@ void DrawSprite(RefPtr spriteRef, SDL_Renderer* renderer)
 	Texture* tex = sprite->texture;
 
 	SDL_Rect rect;
-	rect.x = 0;
-	rect.y = 0;
+	rect.x = point.x;
+	rect.y = point.y;
 	rect.w = sprite->currentFrame->rect.w;
 	rect.h = sprite->currentFrame->rect.h;
 	SDL_RenderCopy(renderer, tex, &(sprite->currentFrame->rect), &rect);
