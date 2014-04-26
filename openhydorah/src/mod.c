@@ -20,7 +20,7 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 #include <SDL.h>
 #include <SDL_loadso.h>
 
-Mod* LoadMod(const char* filename)
+ModInfo* GetModInfo(const char* filename)
 {
 	ModInfo* info = NULL;
 	Mod* mod = NULL;
@@ -62,9 +62,5 @@ Mod* LoadMod(const char* filename)
 	strcpy(info->description, desc);
 	free(desc);
 
-	mod = malloc(sizeof(Mod));
-	mod->info = info;
-	mod->handle = modHandle;
-
-	return mod;
+	return info;
 }

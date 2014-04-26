@@ -28,6 +28,6 @@ typedef struct {
 	void* handle;
 } Mod;
 
-Mod* LoadMod(const char* filename);
+ModInfo* GetModInfo(const char* filename);
 
 #endif // OPENHYDORAH_MOD_H
