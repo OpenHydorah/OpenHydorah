@@ -19,20 +19,28 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <SDL.h>
 #include <SDL_loadso.h>
+#include <physfs.h>
+#include <stdio.h>
 
 ModInfo* GetModInfo(const char* filename)
 {
 	ModInfo* info = NULL;
 	Mod* mod = NULL;
-	void* modHandle = SDL_LoadObject(filename);
+	void* modHandle = NULL;
+	const char* path = PHYSFS_getRealDir(filename);
+	char* fullpath = malloc(strlen(filename) + strlen(path) + 2);
+	sprintf(fullpath, "%s/%s", path, filename);
+	printf("path = %s\n", fullpath);
+	modHandle = SDL_LoadObject(fullpath);
 	void (*getInfo)(char**, char**);
 	if (modHandle == NULL)
 	{
 		SDL_LogError(
 				SDL_LOG_CATEGORY_APPLICATION,
 				"Failed to load mod '%s' - Error: %s",
-				filename, SDL_GetError()
+				fullpath, SDL_GetError()
 				);
+		free (fullpath);
 		return NULL;
 	}
 
@@ -42,11 +50,13 @@ ModInfo* GetModInfo(const char* filename)
 		SDL_LogError(
 				SDL_LOG_CATEGORY_APPLICATION,
 				"Failed to load mod '%s' - Error: %s",
-				filename, SDL_GetError()
+				fullpath, SDL_GetError()
 				);
 		SDL_UnloadObject(modHandle);
+		free(fullpath);
 		return NULL;
 	}
+	free(fullpath);
 
 	char* name = NULL;
 	char* desc = NULL;
