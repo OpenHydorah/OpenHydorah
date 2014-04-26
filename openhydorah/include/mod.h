@@ -20,6 +20,7 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 
 typedef struct {
 	char* name;
+	char* description;
 } ModInfo;
 
 typedef struct {

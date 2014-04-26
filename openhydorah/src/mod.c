@@ -25,7 +25,7 @@ Mod* LoadMod(const char* filename)
 	ModInfo* info = NULL;
 	Mod* mod = NULL;
 	void* modHandle = SDL_LoadObject(filename);
-	char* (*getInfo)(void);
+	void (*getInfo)(char**, char**);
 	if (modHandle == NULL)
 	{
 		SDL_LogError(
@@ -48,13 +48,19 @@ Mod* LoadMod(const char* filename)
 		return NULL;
 	}
 
-	char* name = getInfo();
+	char* name = NULL;
+	char* desc = NULL;
+	getInfo(&name, &desc);
 
 	info = malloc(sizeof(ModInfo));
 	size_t len = strlen(name);
 	info->name = malloc(len);
 	strcpy(info->name, name);
 	free(name);
+	len = strlen(desc);
+	info->description = malloc(len);
+	strcpy(info->description, desc);
+	free(desc);
 
 	mod = malloc(sizeof(Mod));
 	mod->info = info;
