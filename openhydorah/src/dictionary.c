@@ -38,6 +38,7 @@ void AddToDictionary(Dictionary** dict, const char* name, void* data)
 	(*iter)->name = malloc(strlen(name));
 	strcpy((*iter)->name, name);
 	(*iter)->data = data;
+	(*iter)->next = NULL;
 }
 
 void* GetFromDict(Dictionary* dict, const char* name)
