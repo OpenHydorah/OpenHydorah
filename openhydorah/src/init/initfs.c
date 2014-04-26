@@ -90,6 +90,16 @@ int InitFS(const char* arg0)
 		return 1;
 	}
 
+	if (PHYSFS_mount("assets/mods", "/mods", 1) == 0)
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+				"Failed to mount assets/mods folder. %s\n",
+				PHYSFS_getLastError()
+				);
+
+		return 1;
+	}
+
 	return 0;
 }
 
