@@ -103,5 +103,10 @@ void DrawMap(Map* map, SDL_Renderer* renderer)
 {
 	if (map == NULL) return;
 	
-	DrawObject(map->objects, renderer);
+	Object* iter = map->objects;
+	while (iter != NULL)
+	{
+		DrawObject(iter, renderer);
+		iter = iter->next;
+	}
 }
