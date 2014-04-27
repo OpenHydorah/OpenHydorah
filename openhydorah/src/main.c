@@ -1,28 +1,10 @@
-/*
-This file is part of OpenHydorah.
-
-OpenHydorah is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-OpenHydorah is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
 #include <SDL.h>
 #include "init.h"
 #include "cleanup.h"
 #include "sprite.h"
 #include "texture.h"
-#include "refptr.h"
 #include "globals.h"
-#include "dictionary.h"
+#include "mod.h"
 
 int main(int argc, char* argv[])
 {
@@ -31,9 +13,19 @@ int main(int argc, char* argv[])
 		return 1;
 	}
 
+	ModInfo* info = GetModInfo("mods/libhydorah.so");
+	if (info == NULL)
+		return 1;
+
+	printf("Found mod:\n\t%s - %s\n", info->name, info->description);
+
+	SDL_Point pos;
+	pos.x = 100;
+	pos.y = 100;
+
 	TextureList* textures = NULL;
 
-	RefPtr asteroid_big = GetSprite("/sprites/asteroid_big.spr", &textures);
+	Sprite* asteroid_big = GetSprite("/sprites/asteroid_big.spr", &textures);
 
 	int running = 1;
 	while (running)
@@ -46,7 +38,7 @@ int main(int argc, char* argv[])
 			else if (event.type == SDL_KEYDOWN &&
 					event.key.keysym.scancode == SDL_SCANCODE_D)
 			{
-				Sprite* spr = asteroid_big->ptr;
+				Sprite* spr = asteroid_big;
 				if (spr->activeAnimation == NULL)
 				{
 					spr->currentFrame = spr->animations->start;
@@ -59,14 +51,14 @@ int main(int argc, char* argv[])
 
 		SDL_RenderClear(g_renderer);
 
-		DrawSprite(asteroid_big, g_renderer);
+		DrawSpriteAtPoint(asteroid_big, pos, g_renderer);
 		
 		SDL_RenderPresent(g_renderer);
 	}
 
-	DestroyRefPtr(&asteroid_big);
 
 	DestroyTextureList(textures);
+	DestroySprite(asteroid_big);
 
 	Cleanup(g_window, g_renderer);
 
