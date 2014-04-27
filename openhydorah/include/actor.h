@@ -21,10 +21,9 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 #include "sprite.h"
 
 typedef struct {
-	char* script;
 	Sprite* sprite;
-} Unit;
+} Actor;
 
-Unit* CreateUnit(const char* script, Sprite* sprite);
+Actor* CreateActor(Sprite* sprite);
 
 #endif // OPENHYDORAH_UNIT_H
