@@ -254,16 +254,24 @@ void DestroySprite(Sprite* sprite)
 
 void DrawSpriteAtPoint(Sprite* sprite, SDL_Point point, SDL_Renderer* renderer)
 {
-	if (sprite == NULL || sprite->texture == NULL || sprite->frames == NULL)
+	if (sprite == NULL || sprite->currentFrame == NULL)
 		return;
-
-	Texture* tex = sprite->texture;
 
 	SDL_Rect rect;
 	rect.x = point.x;
 	rect.y = point.y;
 	rect.w = sprite->currentFrame->rect.w;
 	rect.h = sprite->currentFrame->rect.h;
+
+	if (sprite->texture == NULL)
+	{
+		SDL_SetRenderDrawColor(renderer, 255, 105, 180, 255);
+		SDL_RenderFillRect(renderer, &rect);
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+		return;
+	}
+
+	Texture* tex = sprite->texture;
 	SDL_RenderCopy(renderer, tex, &(sprite->currentFrame->rect), &rect);
 
 	if (sprite->activeAnimation != NULL)
