@@ -11,7 +11,7 @@ Sprite* CreateSprite(void)
 	if (sprite == NULL)
 	{
 		SDL_LogError(
-				SDL_LOG_CATEGORY_SYSTEM,
+				SDL_LOG_CATEGORY_APPLICATION,
 				"Failed to allocate data for sprite"
 				);
 		return NULL;
@@ -244,6 +244,8 @@ void DestroyFrames(Frame* frames)
 
 void DestroySprite(Sprite* sprite)
 {
+	if (sprite == NULL) return;
+
 	SDL_Log("Destroying sprite");
 
 	DestroyFrames(sprite->frames);
