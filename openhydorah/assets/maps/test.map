@@ -1,0 +1,13 @@
+{
+	"objects": [
+		{
+				"object": {
+					"sprite": "sprites/asteroid_big.spr"
+				},
+				"x": 100,
+				"y": 100
+		}
+	],
+	"actors": [
+	]
+}
