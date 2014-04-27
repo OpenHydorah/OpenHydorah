@@ -17,7 +17,6 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "texture.h"
 #include "globals.h"
-#include "dictionary.h"
 #include <string.h>
 #include <physfs.h>
 

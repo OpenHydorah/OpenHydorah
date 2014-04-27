@@ -186,9 +186,8 @@ Sprite* CreateSpriteFromJSON(json_t* root, TextureList** textures)
 	return sprite;
 }
 
-RefPtr GetSprite(const char* filename, TextureList** textures)
+Sprite* GetSprite(const char* filename, TextureList** textures)
 {
-	RefPtr refPtr = NULL;
 	PHYSFS_File* file = NULL;
 	PHYSFS_sint64 fileLength = 0;
 	uint8_t* buf = NULL;
@@ -246,9 +245,7 @@ RefPtr GetSprite(const char* filename, TextureList** textures)
 
 	json_decref(rootNode);
 
-	refPtr = CreateRefPtr(sprite, DestroySprite);
-
-	return refPtr;
+	return sprite;
 }
 
 void DestroyFrames(Frame* frames)
@@ -262,24 +259,19 @@ void DestroyFrames(Frame* frames)
 	}
 }
 
-void DestroySprite(void* sprite)
+void DestroySprite(Sprite* sprite)
 {
 	SDL_Log("Destroying sprite");
-	Sprite* spr = sprite;
 
-	DestroyFrames(spr->frames);
-	free(spr);
+	DestroyFrames(sprite->frames);
+	free(sprite);
 }
 
-void DrawSpriteAtPoint(RefPtr spriteRef, SDL_Point point, SDL_Renderer* renderer)
+void DrawSpriteAtPoint(Sprite* sprite, SDL_Point point, SDL_Renderer* renderer)
 {
-	if (spriteRef == NULL || spriteRef->ptr == NULL)
+	if (sprite == NULL || sprite->texture == NULL || sprite->frames == NULL)
 		return;
-	Sprite* sprite = spriteRef->ptr;
 
-	if (sprite == NULL || sprite->texture == NULL ||
-			sprite->frames == NULL)
-		return;
 	Texture* tex = sprite->texture;
 
 	SDL_Rect rect;

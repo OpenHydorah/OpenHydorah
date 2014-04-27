@@ -19,18 +19,12 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "tests_refptr.c"
-#include "tests_dictionary.c"
-
 int main(int argc, char* argv[])
 {
-	int number_failed;
-	Suite* refptr_s = refptr_suite();
-	Suite* dict_s = dictionary_suite();
-	SRunner* sr = srunner_create(refptr_s);
-	srunner_add_suite(sr, dict_s);
+	/*int number_failed;
+	SRunner* sr = srunner_create(ptr);
 	srunner_run_all(sr, CK_NORMAL);
 	number_failed = srunner_ntests_failed(sr);
 	srunner_free(sr);
-	return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
+	return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;*/
 }

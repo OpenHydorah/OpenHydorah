@@ -20,7 +20,6 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <SDL.h>
 #include <SDL_image.h>
-#include "refptr.h"
 
 typedef SDL_Texture Texture;
 

@@ -15,22 +15,16 @@ You should have received a copy of the GNU General Public License
 along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef OPENHYDORAH_REFPTR_H
-#define OPENHYDORAH_REFPTR_H
+#ifndef OPENHYDORAH_UNIT_H
+#define OPENHYDORAH_UNIT_H
 
-#include <stdint.h>
+#include "sprite.h"
 
-typedef struct SRefPtr {
-	void* ptr;
-	void (*DestroyFunc)(void*);
-	uint32_t refCount;
-	struct SRefPtr* refSource;
-} *RefPtr;
+typedef struct {
+	char* script;
+	Sprite* sprite;
+} Unit;
 
-RefPtr CreateRefPtr(void* ptr, void(*DestroyFunc)(void*));
+Unit* CreateUnit(const char* script, Sprite* sprite);
 
-RefPtr CopyRefPtr(RefPtr ptr);
-
-void DestroyRefPtr(RefPtr* ptr);
-
-#endif // OPENHYDORAH_REFPTR_H
+#endif // OPENHYDORAH_UNIT_H

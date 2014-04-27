@@ -21,8 +21,6 @@ along with OpenHydorah.  If not, see <http://www.gnu.org/licenses/>.
 #include <SDL.h>
 #include <stdint.h>
 #include "texture.h"
-#include "refptr.h"
-#include "dictionary.h"
 #include "frame.h"
 #include "animation.h"
 #include <jansson.h>
@@ -41,10 +39,10 @@ Sprite* CreateSprite(void);
 
 Sprite* CreateSpriteFromJSON(json_t* root, TextureList** textures);
 
-RefPtr GetSprite(const char* filename, TextureList** textures);
+Sprite* GetSprite(const char* filename, TextureList** textures);
 
-void DestroySprite(void* sprite);
+void DestroySprite(Sprite* sprite);
 
-void DrawSpriteAtPoint(RefPtr spriteRef, SDL_Point point, SDL_Renderer* renderer);
+void DrawSpriteAtPoint(Sprite* sprite, SDL_Point point, SDL_Renderer* renderer);
 
 #endif // OPENHYDORAH_SPRITE_H

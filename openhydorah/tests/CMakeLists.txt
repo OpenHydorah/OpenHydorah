@@ -1,4 +1,4 @@
-set(SRC tests_main.c ../src/refptr.c ../src/dictionary.c)
+set(SRC tests_main.c)
 
 add_executable(hydorah_tests ${SRC})
 
