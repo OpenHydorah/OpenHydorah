@@ -13,7 +13,6 @@ ModInfo* GetModInfo(const char* filename)
 	const char* path = PHYSFS_getRealDir(filename);
 	char* fullpath = malloc(strlen(filename) + strlen(path) + 2);
 	sprintf(fullpath, "%s/%s", path, filename);
-	printf("path = %s\n", fullpath);
 	modHandle = SDL_LoadObject(fullpath);
 	void (*getInfo)(char**, char**);
 	if (modHandle == NULL)
