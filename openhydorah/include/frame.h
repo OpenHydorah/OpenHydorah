@@ -12,6 +12,7 @@ typedef struct SFrame {
 
 Frame* CreateFrame(void);
 Frame* CreateFrameFromJSON(json_t* root);
+Frame* CreateFramesFromJSON(json_t* root);
 Frame* FindFrameByName(Frame* frames, const char* name);
 
 #endif // OPENHYDORAH_FRAME_H

@@ -15,4 +15,6 @@ Animation* CreateAnimation(void);
 
 Animation* CreateAnimationFromJSON(json_t* root, Frame* frames);
 
+Animation* CreateAnimationsFromJSON(json_t* root, Frame* frames);
+
 #endif // OPENHYDORAH_ANIMATION_H

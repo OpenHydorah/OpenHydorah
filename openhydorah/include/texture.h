@@ -18,7 +18,7 @@ void AddTextureToList(TextureList** list, const char* name, Texture* texture);
 
 Texture* GetTextureFromList(TextureList* list, const char* name);
 
-Texture* GetTexture(const char* filename);
+Texture* CreateTextureFromFile(const char* filename);
 
 void DestroyTexture(Texture* texture);
 

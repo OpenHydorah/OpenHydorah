@@ -12,17 +12,15 @@ typedef struct {
 	Texture* texture;
 	Frame* frames;
 	Animation* animations;
-	uint32_t numFrames;
-	uint32_t numAnimations;
 	Frame* currentFrame;
 	Animation* activeAnimation;
 } Sprite;
 
-Sprite* CreateSprite(void);
+Sprite* CreateSprite(Texture* texture, Frame* frames, Frame* defaultFrame, Animation* animations);
 
 Sprite* CreateSpriteFromJSON(json_t* root, TextureList** textures);
 
-Sprite* GetSprite(const char* filename, TextureList** textures);
+Sprite* CreateSpriteFromFile(const char* filename, TextureList** textures);
 
 void DestroySprite(Sprite* sprite);
 

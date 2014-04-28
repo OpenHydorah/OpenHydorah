@@ -141,3 +141,32 @@ Animation* CreateAnimationFromJSON(json_t* root, Frame* frames)
 
 	return animation;
 }
+
+Animation* CreateAnimationsFromJSON(json_t* root, Frame* frames)
+{
+	Animation* animations = NULL;
+	Animation** anims = &animations;
+	uint32_t i = 0;
+
+	for (i = 0; i < json_array_size(root); i++)
+	{
+		json_t* animNode;
+
+		animNode = json_array_get(root, i);
+		if (!json_is_object(animNode))
+		{
+			SDL_LogWarn(
+				SDL_LOG_CATEGORY_APPLICATION,
+				"Animation contains invalid JSON type. Expected object.\n"
+			);
+			continue;
+		}
+
+		while (*anims != NULL)
+			anims = &((*anims)->next);
+
+		*anims = CreateAnimationFromJSON(animNode, frames);
+	}
+
+	return animations;
+}

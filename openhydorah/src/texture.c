@@ -42,7 +42,7 @@ Texture* GetTextureFromList(TextureList* list, const char* name)
 	return NULL;
 }
 
-Texture* GetTexture(const char* filename)
+Texture* CreateTextureFromFile(const char* filename)
 {
 	Texture* tex = NULL;
 	PHYSFS_File* file = NULL;

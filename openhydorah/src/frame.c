@@ -105,6 +105,44 @@ Frame* CreateFrameFromJSON(json_t* root)
 	return frame;
 }
 
+Frame* CreateFramesFromJSON(json_t* root)
+{
+	if (!json_is_array(root))
+	{
+		SDL_LogError(
+				SDL_LOG_CATEGORY_APPLICATION,
+				"Frames is not JSON array"
+				);
+		return NULL;
+	}
+
+	Frame* frames = NULL;
+	Frame** frameIter = &frames;
+	uint32_t i = 0;
+
+	for (i = 0; i < json_array_size(root); i++)
+	{
+		json_t* frameNode;
+
+		frameNode = json_array_get(root, i);
+		if (!json_is_object(frameNode))
+		{
+			SDL_LogWarn(
+				SDL_LOG_CATEGORY_APPLICATION,
+				"Frame is invalid JSON type. Expected object.\n"
+			);
+			continue;
+		}
+
+		while (*frameIter != NULL)
+			frameIter = &((*frameIter)->next);
+
+		*frameIter = CreateFrameFromJSON(frameNode);
+	}
+
+	return frames;
+}
+
 Frame* FindFrameByName(Frame* frames, const char* name)
 {
 	while (frames != NULL)
