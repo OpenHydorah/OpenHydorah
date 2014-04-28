@@ -16,6 +16,11 @@ Object* CreateObject(Sprite* sprite, const char* name, SDL_Point point, Object* 
 	else
 		obj->name = NULL;
 	obj->point = point;
+	if (parent != NULL)
+	{
+		obj->point.x += parent->point.x;
+		obj->point.y += parent->point.y;
+	}
 	obj->parent = parent;
 	obj->children = NULL;
 	obj->next = NULL;
@@ -28,17 +33,7 @@ void DrawObject(Object* object, SDL_Renderer* renderer)
 {
 	if (object == NULL) return;
 
-	SDL_Point point;
-	if (object->parent != NULL)
-	{
-		point = object->parent->point;
-		point.x += object->point.x;
-		point.y += object->point.y;
-	}
-	else
-		point = object->point;
-
-	DrawSpriteAtPoint(object->sprite, point, renderer);
+	DrawSpriteAtPoint(object->sprite, object->point, renderer);
 	DrawObject(object->children, renderer);
 }
 
@@ -67,7 +62,7 @@ void AddChildObject(Object* parent, Object* child)
 	*iter = child;
 }
 
-Object* CreateObjectsFromJSON(json_t* root, TextureList** textures)
+Object* CreateObjectsFromJSON(json_t* root, TextureList** textures, Object* parent)
 {
 	if (!json_is_array(root))
 	{
@@ -115,12 +110,12 @@ Object* CreateObjectsFromJSON(json_t* root, TextureList** textures)
 		objJSON = json_object_get(elem, "object");
 		if (json_is_string(objJSON))
 		{
-			(*objIter) = CreateObjectFromFile(json_string_value(objJSON), point, textures);
+			(*objIter) = CreateObjectFromFile(json_string_value(objJSON), point, textures, parent);
 			objIter = &((*objIter)->next);
 		}
 		else if(json_is_object(objJSON))
 		{
-			(*objIter) = CreateObjectFromJSON(objJSON, point, textures);
+			(*objIter) = CreateObjectFromJSON(objJSON, point, textures, parent);
 			objIter = &((*objIter)->next);
 		}
 		else
@@ -135,7 +130,7 @@ Object* CreateObjectsFromJSON(json_t* root, TextureList** textures)
 	return objects;
 }
 
-Object* CreateObjectFromJSON(json_t* root, SDL_Point point, TextureList** textures)
+Object* CreateObjectFromJSON(json_t* root, SDL_Point point, TextureList** textures, Object* parent)
 {
 	if (!json_is_object(root))
 	{
@@ -152,7 +147,6 @@ Object* CreateObjectFromJSON(json_t* root, SDL_Point point, TextureList** textur
 	json_t* spriteJSON = NULL;
 
 	char* name = NULL;
-	Object* children = NULL;
 	Object* obj = NULL;
 	Sprite* sprite = NULL;
 
@@ -162,24 +156,25 @@ Object* CreateObjectFromJSON(json_t* root, SDL_Point point, TextureList** textur
 		strcpy(name, json_string_value(nameJSON));
 	}
 
-	childrenJSON = json_object_get(root, "children");
-	if (json_is_array(childrenJSON))
-	{
-		children = CreateObjectsFromJSON(childrenJSON, textures);
-	}
-
 	spriteJSON = json_object_get(root, "sprite");
 	if (json_is_string(spriteJSON))
 	{
 		sprite = GetSprite(json_string_value(spriteJSON), textures);
 	}
 
-	obj = CreateObject(sprite, name, point, NULL);
+	obj = CreateObject(sprite, name, point, parent);
+	if (obj == NULL) return NULL;
+
+	childrenJSON = json_object_get(root, "children");
+	if (json_is_array(childrenJSON))
+	{
+		obj->children = CreateObjectsFromJSON(childrenJSON, textures, obj);
+	}
 
 	return obj;
 }
 
-Object* CreateObjectFromFile(const char* filename, SDL_Point point, TextureList** textures)
+Object* CreateObjectFromFile(const char* filename, SDL_Point point, TextureList** textures, Object* parent)
 {
 	Object* obj = NULL;
 	uint8_t* buf = NULL;
@@ -213,7 +208,7 @@ Object* CreateObjectFromFile(const char* filename, SDL_Point point, TextureList*
 		return NULL;
 	}
 
-	obj = CreateObjectFromJSON(rootNode, point, textures);
+	obj = CreateObjectFromJSON(rootNode, point, textures, parent);
 
 	return obj;
 }

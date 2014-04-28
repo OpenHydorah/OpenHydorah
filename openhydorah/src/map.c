@@ -82,7 +82,7 @@ Map* CreateMapFromJSON(json_t* root, TextureList** textures)
 				);
 	}
 	else {
-		objects = CreateObjectsFromJSON(objectsJSON, textures);
+		objects = CreateObjectsFromJSON(objectsJSON, textures, NULL);
 	}
 
 	map = CreateMap(objects);
