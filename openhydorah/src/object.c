@@ -212,3 +212,25 @@ Object* CreateObjectFromFile(const char* filename, SDL_Point point, TextureList*
 
 	return obj;
 }
+
+Object* FindObjectInPoint(Object* root, SDL_Point point)
+{
+	while (root != NULL)
+	{
+		Object* obj = NULL;
+		obj = FindObjectInPoint(root->children, point);
+		if (obj != NULL)
+			return obj;
+
+		if (root->point.x < point.x &&
+				root->point.x + root->sprite->currentFrame->rect.w > point.x &&
+				root->point.y < point.y &&
+				root->point.y + root->sprite->currentFrame->rect.h > point.y
+		   )
+			return root;
+
+		root = root->next;
+	}
+
+	return NULL;
+}

@@ -2,12 +2,13 @@
 
 #include <stdlib.h>
 
-Editor* CreateEditor(void)
+Editor* CreateEditor(Map* map)
 {
 	SDL_Log("Creating editor");
 	Editor* editor = malloc(sizeof(Editor));
 	editor->active = 0;
 	editor->selected = NULL;
+	editor->map = map;
 
 	return editor;
 }
@@ -58,11 +59,17 @@ void RenderSelection(Selection* selection, SDL_Renderer* renderer)
 	while (selection != NULL)
 	{
 		if (selection->object == NULL)
+		{
+			selection = selection->next;
 			continue;
+		}
 
 		Object* obj = selection->object;
 		if (obj->sprite == NULL || obj->sprite->currentFrame == NULL)
+		{
+			selection = selection->next;
 			continue;
+		}
 
 		SDL_Rect rect;
 		rect.x = selection->object->point.x;
@@ -109,5 +116,40 @@ void DestroySelection(Selection* selection)
 		Selection* temp = selection;
 		selection = selection->next;
 		free (temp);
+	}
+}
+
+void HandleEditorEvents(Editor* editor, SDL_Event* event)
+{
+	if (event->type == SDL_KEYDOWN)
+	{
+		SDL_Scancode scancode = event->key.keysym.scancode;
+		if (scancode == SDL_SCANCODE_E)
+		{
+			if (editor->active)
+				HideEditor(editor);
+			else
+				ShowEditor(editor);
+		}
+	}
+
+	if (editor == NULL || !editor->active)
+		return;
+
+	else if (event->type == SDL_MOUSEBUTTONDOWN)
+	{
+		if (editor->map != NULL)
+		{
+			DestroySelection(editor->selected);
+			editor->selected = NULL;
+
+			SDL_Point point;
+			point.x = event->button.x;
+			point.y = event->button.y;
+
+			AddSelection(&editor->selected,
+					FindObjectInPoint(editor->map->objects, point)
+					);
+		}
 	}
 }

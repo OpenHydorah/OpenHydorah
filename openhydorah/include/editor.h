@@ -3,6 +3,7 @@
 
 #include <SDL.h>
 #include "object.h"
+#include "map.h"
 
 typedef struct SSelection {
 	Object* object;
@@ -11,10 +12,11 @@ typedef struct SSelection {
 
 typedef struct {
 	int active;
+	Map* map;
 	Selection* selected;
 } Editor;
 
-Editor* CreateEditor(void);
+Editor* CreateEditor(Map* map);
 
 void ShowEditor(Editor* editor);
 
@@ -27,5 +29,7 @@ void DestroyEditor(Editor* editor);
 void AddSelection(Selection** selection, Object* object);
 
 void DestroySelection(Selection* selection);
+
+void HandleEditorEvents(Editor* editor, SDL_Event* event);
 
 #endif // OPENHYDORAH_EDITOR_H
