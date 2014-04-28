@@ -3,7 +3,9 @@
 #include "filesystem.h"
 #include <string.h>
 
-Object* CreateObject(Sprite* sprite, const char* name, SDL_Point point, Object* parent)
+Object* CreateObject(Sprite* sprite, const char* name,
+		SDL_Point point, CollisionBox collision, Object* parent,
+		Object* children)
 {
 	Object* obj = malloc(sizeof(Object));
 	obj->sprite = sprite;
@@ -22,9 +24,10 @@ Object* CreateObject(Sprite* sprite, const char* name, SDL_Point point, Object* 
 		obj->point.y += parent->point.y;
 	}
 	obj->parent = parent;
-	obj->children = NULL;
+	obj->children = children;
 	obj->next = NULL;
 	AddChildObject(parent, obj);
+	obj->collision = collision;
 	
 	return obj;
 }
@@ -145,10 +148,13 @@ Object* CreateObjectFromJSON(json_t* root, SDL_Point point, TextureList** textur
 	json_t* nameJSON = NULL;
 	json_t* childrenJSON = NULL;
 	json_t* spriteJSON = NULL;
+	json_t* collisionJSON = NULL;
 
 	char* name = NULL;
 	Object* obj = NULL;
 	Sprite* sprite = NULL;
+	Object* children = NULL;
+	CollisionBox collisionBox;
 
 	nameJSON = json_object_get(root, "name");
 	if (json_is_string(nameJSON))
@@ -159,17 +165,30 @@ Object* CreateObjectFromJSON(json_t* root, SDL_Point point, TextureList** textur
 	spriteJSON = json_object_get(root, "sprite");
 	if (json_is_string(spriteJSON))
 	{
-		sprite = GetSprite(json_string_value(spriteJSON), textures);
+		sprite = CreateSpriteFromFile(json_string_value(spriteJSON), textures);
 	}
 
-	obj = CreateObject(sprite, name, point, parent);
-	if (obj == NULL) return NULL;
+	collisionJSON = json_object_get(root, "collision");
+	if (!json_is_object(collisionJSON))
+	{
+		SDL_LogError(
+				SDL_LOG_CATEGORY_APPLICATION,
+				"Object JSON does not contain 'collision'"
+				);
+		return NULL;
+	}
+
+	collisionBox = CreateCollisionBoxFromJSON(collisionJSON);
+
 
 	childrenJSON = json_object_get(root, "children");
 	if (json_is_array(childrenJSON))
 	{
-		obj->children = CreateObjectsFromJSON(childrenJSON, textures, obj);
+		children = CreateObjectsFromJSON(childrenJSON, textures, obj);
 	}
+
+	obj = CreateObject(sprite, name, point,
+			collisionBox, parent, children);
 
 	return obj;
 }

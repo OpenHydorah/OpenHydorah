@@ -4,18 +4,21 @@
 #include "sprite.h"
 #include <SDL.h>
 #include <jansson.h>
+#include "collision.h"
 
 typedef struct SObject {
 	Sprite* sprite;
 	char* name;
 	SDL_Point point;
+	CollisionBox collision;
 	struct SObject* children;
 	struct SObject* parent;
 	struct SObject* next;
 } Object;
 
 Object* CreateObject(Sprite* sprite, const char* name,
-		SDL_Point point, Object* parent);
+		SDL_Point point, CollisionBox collision, Object* parent,
+		Object* children);
 
 Object* CreateObjectFromJSON(json_t* root, SDL_Point point,
 		TextureList** textures, Object* parent);
