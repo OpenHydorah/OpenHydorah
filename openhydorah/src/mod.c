@@ -10,11 +10,14 @@ ModInfo* GetModInfo(const char* filename)
 	ModInfo* info = NULL;
 	Mod* mod = NULL;
 	void* modHandle = NULL;
+	size_t len = strlen(filename);
+	void (*getInfo)(char**, char**) = NULL;
+
 	const char* path = PHYSFS_getRealDir(filename);
-	char* fullpath = malloc(strlen(filename) + strlen(path) + 2);
+	char* fullpath = malloc(len + strlen(path) + 2);
 	sprintf(fullpath, "%s/%s", path, filename);
+
 	modHandle = SDL_LoadObject(fullpath);
-	void (*getInfo)(char**, char**);
 	if (modHandle == NULL)
 	{
 		SDL_LogError(
@@ -45,14 +48,78 @@ ModInfo* GetModInfo(const char* filename)
 	getInfo(&name, &desc);
 
 	info = malloc(sizeof(ModInfo));
-	size_t len = strlen(name);
+	info->filename = malloc(len);
+	strcpy(info->filename, filename);
+
+	info->handle = modHandle;
+
+	len = strlen(name);
 	info->name = malloc(len);
 	strcpy(info->name, name);
 	free(name);
+
 	len = strlen(desc);
 	info->description = malloc(len);
 	strcpy(info->description, desc);
 	free(desc);
 
 	return info;
+}
+
+void DestroyModInfo(ModInfo* info)
+{
+	if (info == NULL) return;
+
+	SDL_UnloadObject(info->handle);
+	free(info->name);
+	free(info->description);
+	free(info->filename);
+	free(info);
+}
+
+Mod* CreateMod(ModInfo* info)
+{
+	if (info == NULL)
+	{
+		SDL_LogError(
+				SDL_LOG_CATEGORY_APPLICATION,
+				"ModInfo is NULL"
+				);
+		return NULL;
+	}
+
+	Mod* mod = NULL;
+	void (*modInit)(Mod*) = NULL;
+
+	mod = malloc(sizeof(Mod));
+	if (mod == NULL)
+	{
+		SDL_LogError(
+				SDL_LOG_CATEGORY_APPLICATION,
+				"Failed to allocate memory for mod: '%s'",
+				info->name
+				);
+		return NULL;
+	}
+
+	mod->info = info;
+	modInit = SDL_LoadFunction(mod->info->handle, "modInit");
+
+	if (modInit != NULL)
+		modInit(mod);
+
+	return mod;
+}
+
+void DestroyMod(Mod* mod)
+{
+	if (mod == NULL) return;
+	void (*modDeinit)(Mod*) = SDL_LoadFunction(mod->info->handle, "modDeinit");
+
+	SDL_Log("Destroying mod: '%s'", mod->info->name);
+
+	if (modDeinit != NULL)
+		modDeinit(mod);
+	DestroyModInfo(mod->info);
+	free(mod);
 }
