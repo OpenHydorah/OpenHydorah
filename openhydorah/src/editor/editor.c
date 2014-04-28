@@ -9,6 +9,9 @@ Editor* CreateEditor(Map* map)
 	editor->active = 0;
 	editor->selected = NULL;
 	editor->map = map;
+	editor->gridWidth = 32;
+	editor->gridHeight = 32;
+	editor->showGrid = 0;
 	editor->showCollisions = 0;
 
 	return editor;

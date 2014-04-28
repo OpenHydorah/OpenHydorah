@@ -4,6 +4,7 @@ void DrawEditor(Editor* editor, SDL_Renderer* renderer)
 {
 	if (editor == NULL || !editor->active) return;
 
+	RenderEditorGrid(editor, renderer);
 	if (editor->showCollisions)
 		DrawObjectCollisions(editor->map->objects, renderer);
 	RenderSelection(editor->selected, renderer);
@@ -68,4 +69,37 @@ void RenderSelectionObjects(Object* obj, SDL_Renderer* renderer)
 
 		obj = obj->next;
 	}
+}
+
+void RenderEditorGrid (Editor* editor, SDL_Renderer* renderer)
+{
+	uint32_t width, height;
+	uint32_t numX, numY;
+	uint32_t i;
+
+	if (SDL_GetRendererOutputSize(renderer, &width, &height) != 0)
+		return;
+
+	numX = (uint32_t)ceil(width / editor->gridWidth);
+	numY = (uint32_t)ceil(height / editor->gridHeight);
+
+	SDL_SetRenderDrawColor(renderer, 50,50,50,255);
+
+	for (i = 1; i <= numX; i++)
+	{
+		SDL_RenderDrawLine(renderer,
+				editor->gridWidth * i, 0,
+				editor->gridWidth * i, height
+				);
+	}
+
+	for (i = 1; i <= numY; i++)
+	{
+		SDL_RenderDrawLine(renderer,
+				0, editor->gridHeight * i,
+				width, editor->gridHeight * i
+				);
+	}
+
+	SDL_SetRenderDrawColor(renderer, 0,0,0,255);
 }

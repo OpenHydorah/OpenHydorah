@@ -15,7 +15,10 @@ typedef struct {
 	uint8_t active;
 	Map* map;
 	Selection* selected;
+	uint32_t gridWidth;
+	uint32_t gridHeight;
 	uint8_t showCollisions;
+	uint8_t showGrid;
 } Editor;
 
 Editor* CreateEditor(Map* map);
@@ -32,6 +35,12 @@ void AddSelection(Selection** selection, Object* object);
 
 void DestroySelection(Selection* selection);
 
+void RenderSelection(Selection* selection, SDL_Renderer* renderer);
+
+void RenderSelectionObjects(Object* obj, SDL_Renderer* renderer);
+
 void HandleEditorEvents(Editor* editor, SDL_Event* event);
+
+void RenderEditorGrid (Editor* editor, SDL_Renderer* renderer);
 
 #endif // OPENHYDORAH_EDITOR_H
