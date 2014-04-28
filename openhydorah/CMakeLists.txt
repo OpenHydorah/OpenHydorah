@@ -3,7 +3,7 @@ option (BUILD_TESTS "Build tests" ON)
 set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 
 include_directories(include)
-file (GLOB SRC src/*.c src/init/*.c)
+file (GLOB SRC src/*.c src/init/*.c src/editor/*.c)
 
 add_executable(hydorah ${SRC})
 target_link_libraries(hydorah jansson)
