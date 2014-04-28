@@ -9,6 +9,7 @@ Editor* CreateEditor(Map* map)
 	editor->active = 0;
 	editor->selected = NULL;
 	editor->map = map;
+	editor->showCollisions = 0;
 
 	return editor;
 }
@@ -86,10 +87,12 @@ void RenderSelection(Selection* selection, SDL_Renderer* renderer)
 	}
 }
 
-void RenderEditor(Editor* editor, SDL_Renderer* renderer)
+void DrawEditor(Editor* editor, SDL_Renderer* renderer)
 {
 	if (editor == NULL || !editor->active) return;
 
+	if (editor->showCollisions)
+		DrawObjectCollisions(editor->map->objects, renderer);
 	RenderSelection(editor->selected, renderer);
 }
 
@@ -121,6 +124,8 @@ void DestroySelection(Selection* selection)
 
 void HandleEditorEvents(Editor* editor, SDL_Event* event)
 {
+	if (editor == NULL) return;
+
 	if (event->type == SDL_KEYDOWN)
 	{
 		SDL_Scancode scancode = event->key.keysym.scancode;
@@ -131,9 +136,15 @@ void HandleEditorEvents(Editor* editor, SDL_Event* event)
 			else
 				ShowEditor(editor);
 		}
+
+		if (!editor->active)
+			return;
+
+		if (scancode == SDL_SCANCODE_C)
+			editor->showCollisions = (editor->showCollisions ? 0 : 1);
 	}
 
-	if (editor == NULL || !editor->active)
+	if (!editor->active)
 		return;
 
 	else if (event->type == SDL_MOUSEBUTTONDOWN)

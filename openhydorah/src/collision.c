@@ -43,3 +43,12 @@ CollisionBox CreateCollisionBoxFromJSON(json_t* root)
 
 	return box;
 }
+
+void DrawCollisionBox(CollisionBox box, SDL_Renderer* renderer)
+{
+	SDL_SetRenderDrawColor(renderer, 0,0, 255, 255);
+	SDL_RenderDrawRect(renderer, &box);
+	SDL_SetRenderDrawColor(renderer, 0,0, 255, 100);
+	SDL_RenderFillRect(renderer, &box);
+	SDL_SetRenderDrawColor(renderer, 0,0, 0, 255);
+}

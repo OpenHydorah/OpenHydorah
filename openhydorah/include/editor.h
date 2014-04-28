@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include "object.h"
 #include "map.h"
+#include <stdint.h>
 
 typedef struct SSelection {
 	Object* object;
@@ -11,9 +12,10 @@ typedef struct SSelection {
 } Selection;
 
 typedef struct {
-	int active;
+	uint8_t active;
 	Map* map;
 	Selection* selected;
+	uint8_t showCollisions;
 } Editor;
 
 Editor* CreateEditor(Map* map);
@@ -22,7 +24,7 @@ void ShowEditor(Editor* editor);
 
 void HideEditor(Editor* editor);
 
-void RenderEditor(Editor* editor, SDL_Renderer* renderer);
+void DrawEditor(Editor* editor, SDL_Renderer* renderer);
 
 void DestroyEditor(Editor* editor);
 

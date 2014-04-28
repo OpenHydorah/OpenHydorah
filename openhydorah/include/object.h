@@ -31,6 +31,8 @@ Object* CreateObjectFromFile(const char* filename, SDL_Point point,
 
 void DrawObject(Object* object, SDL_Renderer* renderer);
 
+void DrawObjectCollisions(Object* object, SDL_Renderer* renderer);
+
 void DestroyObject(Object* object);
 
 void AddChildObject(Object* parent, Object* child);

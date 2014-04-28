@@ -28,6 +28,8 @@ Object* CreateObject(Sprite* sprite, const char* name,
 	obj->next = NULL;
 	AddChildObject(parent, obj);
 	obj->collision = collision;
+	obj->collision.x += obj->point.x;
+	obj->collision.y += obj->point.y;
 	
 	return obj;
 }
@@ -252,4 +254,15 @@ Object* FindObjectInPoint(Object* root, SDL_Point point)
 	}
 
 	return NULL;
+}
+
+void DrawObjectCollisions(Object* object, SDL_Renderer* renderer)
+{
+	while (object != NULL)
+	{
+		DrawCollisionBox(object->collision, renderer);
+		DrawObjectCollisions(object->children, renderer);
+
+		object = object->next;
+	}
 }
