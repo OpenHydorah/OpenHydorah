@@ -39,4 +39,6 @@ void AddChildObject(Object* parent, Object* child);
 
 Object* FindObjectInPoint(Object* root, SDL_Point point);
 
+Object* FindObjectByName(Object* root, const char* name);
+
 #endif // OPENHYDORAH_OBJECT_H

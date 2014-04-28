@@ -266,3 +266,18 @@ void DrawObjectCollisions(Object* object, SDL_Renderer* renderer)
 		object = object->next;
 	}
 }
+
+Object* FindObjectByName(Object* root, const char* name)
+{
+	while (root != NULL)
+	{
+		if (strcmp(root->name, name) == 0)
+			return root;
+
+		Object* childObj = FindObjectByName(root->children, name);
+		if (childObj != NULL)
+			return childObj;
+	}
+	
+	return NULL;
+}
