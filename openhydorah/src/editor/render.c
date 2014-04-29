@@ -1,4 +1,5 @@
 #include "editor.h"
+#include <stdlib.h>
 
 void DrawEditor(Editor* editor, SDL_Renderer* renderer)
 {
@@ -8,9 +9,11 @@ void DrawEditor(Editor* editor, SDL_Renderer* renderer)
 	if (editor->showCollisions)
 		DrawObjectCollisions(editor->map->objects, renderer);
 	RenderSelection(editor->selected, renderer);
+	if (editor->showSelectionBox)
+		RenderSelectionBox(editor, renderer);
 }
 
-void RenderSelection(Selection* selection, SDL_Renderer* renderer)
+void RenderSelection(ObjectList* selection, SDL_Renderer* renderer)
 {
 	while (selection != NULL)
 	{
@@ -80,8 +83,8 @@ void RenderEditorGrid (Editor* editor, SDL_Renderer* renderer)
 	if (SDL_GetRendererOutputSize(renderer, &width, &height) != 0)
 		return;
 
-	numX = (uint32_t)ceil(width / editor->gridWidth);
-	numY = (uint32_t)ceil(height / editor->gridHeight);
+	numX = abs(width / editor->gridWidth);
+	numY = abs(height / editor->gridHeight);
 
 	SDL_SetRenderDrawColor(renderer, 50,50,50,255);
 
@@ -101,5 +104,20 @@ void RenderEditorGrid (Editor* editor, SDL_Renderer* renderer)
 				);
 	}
 
+	SDL_SetRenderDrawColor(renderer, 0,0,0,255);
+}
+
+void RenderSelectionBox(Editor* editor, SDL_Renderer* renderer)
+{
+	if (editor == NULL) return;
+
+	SDL_SetRenderDrawColor(renderer, 0,255,0,255);
+
+	SDL_RenderDrawRect(renderer, &editor->selectionRect);
+
+	SDL_SetRenderDrawColor(renderer, 0,255,0,120);
+
+	SDL_RenderFillRect(renderer, &editor->selectionRect);
+	
 	SDL_SetRenderDrawColor(renderer, 0,0,0,255);
 }
