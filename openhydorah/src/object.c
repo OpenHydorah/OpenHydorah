@@ -301,20 +301,28 @@ ObjectList* FindObjectsInRect(Object* root, SDL_Rect rect)
 
 	while (root != NULL)
 	{
-		FindObjectsInRect(root->children, rect);
-
 		if (root->sprite == NULL || root->sprite->currentFrame == NULL)
 		{
 			root = root->next;
 			continue;
 		}
 
-		SDL_Point center;
-		center.x = root->point.x + root->sprite->currentFrame->rect.w / 2;
-		center.y = root->point.y + root->sprite->currentFrame->rect.h / 2;
+		SDL_Point halfSize;
+		halfSize.x = root->sprite->currentFrame->rect.w / 2;
+		halfSize.y = root->sprite->currentFrame->rect.h / 2;
 
-		if (rect.x <= center.x && rect.x + rect.w >= center.x &&
-				rect.y <= center.y && rect.y + rect.h >= center.y)
+		SDL_Point point;
+		point.x = root->point.x + halfSize.x;
+		point.y = root->point.y + halfSize.y;
+
+		SDL_Rect rectEx;
+		rectEx.x = rect.x - halfSize.x;
+		rectEx.y = rect.y - halfSize.y;
+		rectEx.w = rect.w + halfSize.x;
+		rectEx.h = rect.h + halfSize.y;
+
+		if (rectEx.x <= point.x && rect.x + rectEx.w >= point.x &&
+				rectEx.y <= point.y && rect.y + rectEx.h >= point.y)
 		{
 			*iter = malloc(sizeof(ObjectList));
 			(*iter)->object = root;
