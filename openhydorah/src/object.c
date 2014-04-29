@@ -2,6 +2,8 @@
 
 #include "filesystem.h"
 #include <string.h>
+#include <math.h>
+#include <stdlib.h>
 
 Object* CreateObject(Sprite* sprite, const char* name,
 		SDL_Point point, CollisionBox collision, Object* parent,
@@ -236,9 +238,9 @@ Object* CreateObjectFromFile(const char* filename, SDL_Point point, TextureList*
 
 Object* FindObjectInPoint(Object* root, SDL_Point point)
 {
+	Object* obj = NULL;
 	while (root != NULL)
 	{
-		Object* obj = NULL;
 		obj = FindObjectInPoint(root->children, point);
 		if (obj != NULL)
 			return obj;
@@ -280,4 +282,45 @@ Object* FindObjectByName(Object* root, const char* name)
 	}
 	
 	return NULL;
+}
+
+void DestroyObjectList(ObjectList* list)
+{
+	while (list != NULL)
+	{
+		ObjectList* temp = list;
+		list = list->next;
+		free(temp);
+	}
+}
+
+ObjectList* FindObjectsInRect(Object* root, SDL_Rect rect)
+{
+	ObjectList* list = NULL;
+	ObjectList** iter = &list;
+
+	while (root != NULL)
+	{
+		if (root->sprite == NULL || root->sprite->currentFrame == NULL)
+		{
+			root = root->next;
+			continue;
+		}
+
+		SDL_Point center;
+		center.x = root->point.x + root->sprite->currentFrame->rect.w / 2;
+		center.y = root->point.y + root->sprite->currentFrame->rect.h / 2;
+
+		if (rect.x <= center.x && rect.x + rect.w >= center.x &&
+				rect.y <= center.y && rect.y + rect.h >= center.y)
+		{
+			*iter = malloc(sizeof(ObjectList));
+			(*iter)->object = root;
+			(*iter)->next = NULL;
+			iter = &((*iter)->next);
+		}
+		root = root->next;
+	}
+
+	return list;
 }
