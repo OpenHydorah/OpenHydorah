@@ -14,7 +14,7 @@ Object* CreateObject(Sprite* sprite, const char* name,
 	if (name != NULL)
 	{
 		size_t len = strlen(name);
-		obj->name = malloc(len);
+		obj->name = malloc(len + 1);
 		strcpy(obj->name, name);
 	}
 	else
@@ -163,7 +163,9 @@ Object* CreateObjectFromJSON(json_t* root, SDL_Point point, TextureList** textur
 	nameJSON = json_object_get(root, "name");
 	if (json_is_string(nameJSON))
 	{
-		strcpy(name, json_string_value(nameJSON));
+		const char* val = json_string_value(nameJSON);
+		name = malloc(strlen(val) + 1);
+		strcpy(name, val);
 	}
 
 	spriteJSON = json_object_get(root, "sprite");

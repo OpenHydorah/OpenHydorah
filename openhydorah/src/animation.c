@@ -58,7 +58,7 @@ Animation* CreateAnimationFromJSON(json_t* root, Frame* frames)
 		return NULL;
 
 	size_t size = strlen(json_string_value(name));
-	animation->name = malloc(size);
+	animation->name = malloc(size + 1);
 	strcpy(animation->name, json_string_value(name));
 
 	frameNodes = json_object_get(root, "frames");
@@ -100,7 +100,7 @@ Animation* CreateAnimationFromJSON(json_t* root, Frame* frames)
 			(*fIter) = malloc(sizeof(Frame));
 			(*fIter)->rect = foundFrame->rect;
 			size_t size = strlen(foundFrame->name);
-			(*fIter)->name = malloc(sizeof(size));
+			(*fIter)->name = malloc(size + 1);
 			strcpy((*fIter)->name, foundFrame->name);
 			(*fIter)->next = NULL;
 		}

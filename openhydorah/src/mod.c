@@ -48,18 +48,18 @@ ModInfo* GetModInfo(const char* filename)
 	getInfo(&name, &desc);
 
 	info = malloc(sizeof(ModInfo));
-	info->filename = malloc(len);
+	info->filename = malloc(len + 1);
 	strcpy(info->filename, filename);
 
 	info->handle = modHandle;
 
 	len = strlen(name);
-	info->name = malloc(len);
+	info->name = malloc(len + 1);
 	strcpy(info->name, name);
 	free(name);
 
 	len = strlen(desc);
-	info->description = malloc(len);
+	info->description = malloc(len + 1);
 	strcpy(info->description, desc);
 	free(desc);
 

@@ -51,7 +51,7 @@ Frame* CreateFrameFromJSON(json_t* root)
 		return NULL;
 
 	size_t size = strlen(json_string_value(name));
-	frame->name = malloc(size);
+	frame->name = malloc(size + 1);
 	strcpy(frame->name, json_string_value(name));
 
 	x = json_object_get(root, "x");

@@ -23,7 +23,7 @@ void AddTextureToList(TextureList** list, const char* name, Texture* texture)
 	(*list) = CreateTextureList();
 	(*list)->texture = texture;
 	size_t len = strlen(name);
-	(*list)->name = malloc(len);
+	(*list)->name = malloc(len+1);
 	strcpy((*list)->name, name);
 }
 
