@@ -1,10 +1,11 @@
 #include <SDL.h>
 #include "init.h"
 #include "cleanup.h"
-#include "sprite.h"
 #include "texture.h"
 #include "globals.h"
 #include "mod.h"
+#include "map.h"
+#include "editor.h"
 
 int main(int argc, char* argv[])
 {
@@ -12,6 +13,7 @@ int main(int argc, char* argv[])
 	{
 		return 1;
 	}
+	SDL_SetRenderDrawBlendMode(g_renderer, SDL_BLENDMODE_ADD);
 
 	ModInfo* info = GetModInfo("mods/libhydorah.so");
 	if (info == NULL)
@@ -19,13 +21,12 @@ int main(int argc, char* argv[])
 
 	printf("Found mod:\n\t%s - %s\n", info->name, info->description);
 
-	SDL_Point pos;
-	pos.x = 100;
-	pos.y = 100;
+	Mod* mod = CreateMod(info);
 
 	TextureList* textures = NULL;
 
-	Sprite* asteroid_big = GetSprite("/sprites/asteroid_big.spr", &textures);
+	Map* map = CreateMapFromFile("maps/test.map", &textures);
+	Editor* editor = CreateEditor(map);
 
 	int running = 1;
 	while (running)
@@ -35,30 +36,23 @@ int main(int argc, char* argv[])
 		{
 			if (event.type == SDL_QUIT)
 				running = 0;
-			else if (event.type == SDL_KEYDOWN &&
-					event.key.keysym.scancode == SDL_SCANCODE_D)
-			{
-				Sprite* spr = asteroid_big;
-				if (spr->activeAnimation == NULL)
-				{
-					spr->currentFrame = spr->animations->start;
-					spr->activeAnimation = spr->animations;
-				}
-				else
-					spr->activeAnimation = NULL;
-			}
+			
+			HandleEditorEvents(editor, &event);
 		}
 
 		SDL_RenderClear(g_renderer);
 
-		DrawSpriteAtPoint(asteroid_big, pos, g_renderer);
-		
+		DrawMap(map, g_renderer);
+
+		DrawEditor(editor, g_renderer);
+
 		SDL_RenderPresent(g_renderer);
 	}
 
-
+	DestroyMap(map);
 	DestroyTextureList(textures);
-	DestroySprite(asteroid_big);
+	DestroyEditor(editor);
+	DestroyMod(mod);
 
 	Cleanup(g_window, g_renderer);
 

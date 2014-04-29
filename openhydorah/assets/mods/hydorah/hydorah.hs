@@ -16,3 +16,15 @@ getInfo namePtr descPtr = do
 	descStr <- newCAString "Hydorah mod"
 	poke descPtr descStr
 	return ()
+
+foreign export ccall modInit
+	:: Ptr a -> IO ()
+modInit mod = do
+	traceIO "modInit"
+	return ()
+
+foreign export ccall modDeinit
+	:: Ptr a -> IO ()
+modDeinit mod = do
+	traceIO "modDeinit"
+	return ()
