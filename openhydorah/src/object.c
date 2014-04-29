@@ -301,6 +301,8 @@ ObjectList* FindObjectsInRect(Object* root, SDL_Rect rect)
 
 	while (root != NULL)
 	{
+		FindObjectsInRect(root->children, rect);
+
 		if (root->sprite == NULL || root->sprite->currentFrame == NULL)
 		{
 			root = root->next;
