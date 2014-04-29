@@ -17,6 +17,7 @@ typedef struct {
 	uint8_t showCollisions;
 	uint8_t showGrid;
 	uint8_t showSelectionBox;
+	uint8_t isDragging;
 } Editor;
 
 Editor* CreateEditor(Map* map);

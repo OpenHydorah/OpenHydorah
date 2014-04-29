@@ -5,7 +5,8 @@ void DrawEditor(Editor* editor, SDL_Renderer* renderer)
 {
 	if (editor == NULL || !editor->active) return;
 
-	RenderEditorGrid(editor, renderer);
+	if (editor->showGrid)
+		RenderEditorGrid(editor, renderer);
 	if (editor->showCollisions)
 		DrawObjectCollisions(editor->map->objects, renderer);
 	RenderSelection(editor->selected, renderer);

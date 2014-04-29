@@ -14,6 +14,7 @@ Editor* CreateEditor(Map* map)
 	editor->showGrid = 0;
 	editor->showCollisions = 0;
 	editor->showSelectionBox = 0;
+	editor->isDragging = 0;
 
 	return editor;
 }

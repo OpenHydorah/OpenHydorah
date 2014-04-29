@@ -20,6 +20,9 @@ void HandleEditorEvents(Editor* editor, SDL_Event* event)
 
 		if (scancode == SDL_SCANCODE_C)
 			editor->showCollisions = (editor->showCollisions ? 0 : 1);
+
+		if (scancode == SDL_SCANCODE_G)
+			editor->showGrid = (editor->showGrid ? 0 : 1);
 	}
 
 	if (!editor->active)
@@ -27,16 +30,32 @@ void HandleEditorEvents(Editor* editor, SDL_Event* event)
 
 	if (event->type == SDL_MOUSEBUTTONDOWN)
 	{
-		DestroyObjectList(editor->selected);
-		editor->selected = NULL;
-		editor->showSelectionBox = 1;
+		SDL_Point point;
+		point.x = event->button.x;
+		point.y = event->button.y;
 
-		editor->selectionStart.x = event->button.x;
-		editor->selectionStart.y = event->button.y;
-		editor->selectionRect.x = event->button.x;
-		editor->selectionRect.y = event->button.y;
-		editor->selectionRect.w = 1;
-		editor->selectionRect.h = 1;
+		Object* obj = FindObjectInPoint(editor->map->objects, point);
+		if (obj != NULL)
+		{
+			editor->isDragging = 1;
+			if (editor->selected == NULL)
+			{
+				editor->selected = malloc(sizeof(ObjectList));
+				editor->selected->object = obj;
+				editor->selected->next;
+			}
+		}
+		else
+		{
+			editor->showSelectionBox = 1;
+
+			editor->selectionStart.x = event->button.x;
+			editor->selectionStart.y = event->button.y;
+			editor->selectionRect.x = event->button.x;
+			editor->selectionRect.y = event->button.y;
+			editor->selectionRect.w = 1;
+			editor->selectionRect.h = 1;
+		}
 
 			/*SDL_Point point;
 			point.x = event->button.x;
@@ -49,27 +68,49 @@ void HandleEditorEvents(Editor* editor, SDL_Event* event)
 	}
 	else if (event->type == SDL_MOUSEMOTION)
 	{
-		editor->selectionRect.h = event->motion.y - editor->selectionRect.y;
-		editor->selectionRect.w = event->motion.x - editor->selectionRect.x;
+		if (editor->isDragging)
+		{
+			ObjectList* selIter = editor->selected;
+			while (selIter != NULL)
+			{
+				selIter->object->point.x += event->motion.xrel;
+				selIter->object->point.y += event->motion.yrel;
+				selIter = selIter->next;
+			}
+		}
+		else if (editor->showSelectionBox)
+		{
+			editor->selectionRect.h = event->motion.y - editor->selectionRect.y;
+			editor->selectionRect.w = event->motion.x - editor->selectionRect.x;
+		}
 	}
 	else if (event->type == SDL_MOUSEBUTTONUP)
 	{
-		editor->showSelectionBox = 0;
-
-		// Convert start position to top-left
-		if (editor->selectionRect.w < 0)
+		if (editor->isDragging)
 		{
-			editor->selectionRect.x = event->motion.x;
-			editor->selectionRect.w = editor->selectionStart.x - editor->selectionRect.x;
+			editor->isDragging = 0;
 		}
-
-		if (editor->selectionRect.h < 0)
+		else if (editor->showSelectionBox)
 		{
-			editor->selectionRect.y = event->motion.y;
-			editor->selectionRect.h = editor->selectionStart.y - editor->selectionRect.y;
-		}		
+			DestroyObjectList(editor->selected);
+			editor->selected = NULL;
+			editor->showSelectionBox = 0;
 
-		editor->selected = FindObjectsInRect(editor->map->objects,
-				editor->selectionRect);
+			// Convert start position to top-left
+			if (editor->selectionRect.w < 0)
+			{
+				editor->selectionRect.x = event->motion.x;
+				editor->selectionRect.w = editor->selectionStart.x - editor->selectionRect.x;
+			}
+
+			if (editor->selectionRect.h < 0)
+			{
+				editor->selectionRect.y = event->motion.y;
+				editor->selectionRect.h = editor->selectionStart.y - editor->selectionRect.y;
+			}		
+
+			editor->selected = FindObjectsInRect(editor->map->objects,
+					editor->selectionRect);
+		}
 	}
 }
