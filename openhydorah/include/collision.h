@@ -1,3 +1,10 @@
+/** \file collision.h
+ * Contains structs and functions for Collision
+ *
+ * \TODO Change this whole file and figure out how
+ * to make a good collision system
+ */
+
 #ifndef OPENHYDORAH_COLLISION_H
 #define OPENHYDORAH_COLLISION_H
 
