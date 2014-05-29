@@ -42,30 +42,27 @@ struct entity {
  * \param[in] sprite The entity's sprite
  * \param[in] name The entity's name.
  * Pass NULL if you don't intend to search for it
- * \param[in] position The position of the entity
  * \param[in] parent The entity's parent
  * \param[in] children The entity's children
  *
  * \returns Pointer to the new entity. NULL if error.
  */
 struct entity *entity_create(struct sprite *sprite, const char *name,
-		struct vec2 position, struct entity *parent
+		struct entity *parent
 		);
 
 /**
  * \brief Creates an entity from a JSON object
  *
  * \param[in] root The JSON object
- * \param[in] position The position of the entity
  * \param[out] textures The list to add the sprite's texture to
  * \param[in] parent The entity's parent
  * \param[in] renderer The renderer to use for texture loading
  *
  * \return The new Object or NULL on error.
  */
-struct entity *entity_create_json(json_t *root, struct vec2 position,
-		struct list *textures, struct entity *parent,
-		SDL_Renderer *renderer);
+struct entity *entity_create_json(json_t *root, struct list *textures,
+		struct entity *parent, SDL_Renderer *renderer);
 
 /**
  * \brief Creates a entity hierarchy from a JSON array
@@ -86,14 +83,13 @@ uint8_t entity_list_create_json(struct list *ent_list, json_t *root,
  * \brief Creates an entity from a file
  *
  * \param[in] filename Path to the file to read
- * \param[in] position The position of the entity
  * \param[out] textures The list to add the sprite's texture to
  * \param[in] parent The entity's parent
  * \param[in] renderer The renderer to use for texture loading
  *
  * \return The new entity
  */
-struct entity *entity_create_file(const char *filename, struct vec2 position,
+struct entity *entity_create_file(const char *filename,
 		struct list *textures, struct entity *parent,
 		SDL_Renderer *renderer);
 

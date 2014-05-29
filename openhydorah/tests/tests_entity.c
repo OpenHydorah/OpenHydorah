@@ -3,10 +3,8 @@
 
 START_TEST (test_entity)
 {
-	struct vec2 v1 = {1.0f, 2.0f};
-	struct vec2 v2 = {3.0f, 4.0f};
-	struct entity *ent = entity_create(NULL, "ent", v1, NULL);
-	struct entity *child = entity_create(NULL, "child", v2, ent);
+	struct entity *ent = entity_create(NULL, "ent", NULL);
+	struct entity *child = entity_create(NULL, "child", ent);
 
 	ck_assert_str_eq(entity_get_name(ent), "ent");
 	ck_assert_str_eq(entity_get_name(child), "child");

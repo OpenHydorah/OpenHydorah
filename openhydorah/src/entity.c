@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 struct entity *entity_create(struct sprite *sprite, const char *name,
-		struct vec2 position, struct entity *parent
+		struct entity *parent
 		)
 {
 	struct entity *ent = malloc(sizeof(*ent));
@@ -21,11 +21,10 @@ struct entity *entity_create(struct sprite *sprite, const char *name,
 	list_init(&ent->children);
 	list_init(&ent->branch);
 
-	ent->position = position;
+	ent->position.x = 0.0f;
+	ent->position.y = 0.0f;
 	ent->parent = parent;
 	if (parent != NULL) {
-		ent->position.x += parent->position.x;
-		ent->position.y += parent->position.y;
 		list_append(&ent->branch, &ent->parent->children);
 	}
 
@@ -95,33 +94,44 @@ uint8_t entity_list_create_json(struct list *ent_list, json_t *root,
 			continue;
 		}
 
-		obj_json = json_object_get(arr_json, "x");
-		if (json_is_integer(obj_json))
-			position.x = json_integer_value(obj_json);
-
-		obj_json = json_object_get(arr_json, "y");
-		if (json_is_integer(obj_json))
-			position.y = json_integer_value(obj_json);
-
 		obj_json = json_object_get(arr_json, "entity");
 		if (json_is_string(obj_json)) {
 			ent = entity_create_file(json_string_value(obj_json),
-						position, textures, parent, renderer);
+						textures, parent, renderer);
 
 			list_append(&ent->branch, ent_list);
 		} else if (json_is_object(obj_json)) {
 			ent = entity_create_json(obj_json,
-					position, textures, parent, renderer);
+					textures, parent, renderer);
 
 			list_append(&ent->branch, ent_list);
 		}
+		else
+			continue;
+
+		obj_json = json_object_get(arr_json, "x");
+		if (json_is_number(obj_json))
+			entity_set_position_x(ent, json_number_value(obj_json));
+
+		obj_json = json_object_get(arr_json, "y");
+		if (json_is_number(obj_json))
+			entity_set_position_y(ent, json_number_value(obj_json));
+
+		obj_json = json_object_get(arr_json, "sprite");
+		if (json_is_string(obj_json)) {
+			if (ent->sprite != NULL)
+				sprite_destroy(ent->sprite);
+			ent->sprite = sprite_create_file(json_string_value(obj_json),
+					textures, renderer);
+		}
+
 	}
 
 	return 0;
 }
 
-struct entity *entity_create_json(json_t *root, struct vec2 position,
-		struct list *textures, struct entity *parent, SDL_Renderer *renderer)
+struct entity *entity_create_json(json_t *root, struct list *textures,
+		struct entity *parent, SDL_Renderer *renderer)
 {
 	if (!json_is_object(root)) {
 		SDL_LogError(
@@ -146,8 +156,7 @@ struct entity *entity_create_json(json_t *root, struct vec2 position,
 		sprite = sprite_create_file(json_string_value(iter_json),
 				textures, renderer);
 
-	ent = entity_create(sprite, name, position,
-			parent);
+	ent = entity_create(sprite, name, parent);
 
 	iter_json = json_object_get(root, "children");
 	if (json_is_array(iter_json))
@@ -157,7 +166,7 @@ struct entity *entity_create_json(json_t *root, struct vec2 position,
 	return ent;
 }
 
-struct entity *entity_create_file(const char *filename, struct vec2 position,
+struct entity *entity_create_file(const char *filename,
 		struct list *textures, struct entity *parent, SDL_Renderer *renderer)
 {
 	uint8_t *buf = NULL;
@@ -190,7 +199,7 @@ struct entity *entity_create_file(const char *filename, struct vec2 position,
 		return NULL;
 	}
 
-	ent = entity_create_json(root_node, position, textures, parent, renderer);
+	ent = entity_create_json(root_node, textures, parent, renderer);
 	json_decref(root_node);
 	return ent;
 }
