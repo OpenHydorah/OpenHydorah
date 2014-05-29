@@ -5,20 +5,20 @@
 #include <physfs.h>
 #include <stdio.h>
 
-ModInfo* GetModInfo(const char* filename)
+struct mod_info *mod_info_get(const char *filename)
 {
-	ModInfo* info = NULL;
-	Mod* mod = NULL;
-	void* modHandle = NULL;
+	struct mod_info *info = NULL;
+	struct mod *mod = NULL;
+	void *mod_handle = NULL;
 	size_t len = strlen(filename);
-	void (*getInfo)(char**, char**) = NULL;
+	void (*get_info)(char**, char**) = NULL;
 
-	const char* path = PHYSFS_getRealDir(filename);
-	char* fullpath = malloc(len + strlen(path) + 2);
+	const char *path = PHYSFS_getRealDir(filename);
+	char *fullpath = malloc(len + strlen(path) + 2);
 	sprintf(fullpath, "%s/%s", path, filename);
 
-	modHandle = SDL_LoadObject(fullpath);
-	if (modHandle == NULL)
+	mod_handle = SDL_LoadObject(fullpath);
+	if (mod_handle == NULL)
 	{
 		SDL_LogError(
 				SDL_LOG_CATEGORY_APPLICATION,
@@ -29,15 +29,15 @@ ModInfo* GetModInfo(const char* filename)
 		return NULL;
 	}
 
-	getInfo = SDL_LoadFunction(modHandle, "getInfo");
-	if (getInfo == NULL)
+	get_info = SDL_LoadFunction(mod_handle, "get_info");
+	if (get_info == NULL)
 	{
 		SDL_LogError(
 				SDL_LOG_CATEGORY_APPLICATION,
 				"Failed to load mod '%s' - Error: %s",
 				fullpath, SDL_GetError()
 				);
-		SDL_UnloadObject(modHandle);
+		SDL_UnloadObject(mod_handle);
 		free(fullpath);
 		return NULL;
 	}
@@ -45,13 +45,13 @@ ModInfo* GetModInfo(const char* filename)
 
 	char* name = NULL;
 	char* desc = NULL;
-	getInfo(&name, &desc);
+	get_info(&name, &desc);
 
-	info = malloc(sizeof(ModInfo));
+	info = malloc(sizeof(*info));
 	info->filename = malloc(len + 1);
 	strcpy(info->filename, filename);
 
-	info->handle = modHandle;
+	info->handle = mod_handle;
 
 	len = strlen(name);
 	info->name = malloc(len + 1);
@@ -66,7 +66,7 @@ ModInfo* GetModInfo(const char* filename)
 	return info;
 }
 
-void DestroyModInfo(ModInfo* info)
+void mod_info_destroy(struct mod_info *info)
 {
 	if (info == NULL) return;
 
@@ -77,21 +77,20 @@ void DestroyModInfo(ModInfo* info)
 	free(info);
 }
 
-Mod* CreateMod(ModInfo* info)
+struct mod *mod_create(struct mod_info *info)
 {
 	if (info == NULL)
 	{
 		SDL_LogError(
 				SDL_LOG_CATEGORY_APPLICATION,
-				"ModInfo is NULL"
+				"mod_info is NULL"
 				);
 		return NULL;
 	}
 
-	Mod* mod = NULL;
-	void (*modInit)(Mod*) = NULL;
+	struct mod *mod = NULL;
 
-	mod = malloc(sizeof(Mod));
+	mod = malloc(sizeof(*mod));
 	if (mod == NULL)
 	{
 		SDL_LogError(
@@ -103,23 +102,19 @@ Mod* CreateMod(ModInfo* info)
 	}
 
 	mod->info = info;
-	modInit = SDL_LoadFunction(mod->info->handle, "modInit");
-
-	if (modInit != NULL)
-		modInit(mod);
+	mod->init = SDL_LoadFunction(mod->info->handle, "mod_init");
+	mod->update = SDL_LoadFunction(mod->info->handle, "mod_update");
+	mod->destroy = SDL_LoadFunction(mod->info->handle, "mod_destroy");
 
 	return mod;
 }
 
-void DestroyMod(Mod* mod)
+void mod_destroy(struct mod *mod)
 {
 	if (mod == NULL) return;
-	void (*modDeinit)(Mod*) = SDL_LoadFunction(mod->info->handle, "modDeinit");
 
 	SDL_Log("Destroying mod: '%s'", mod->info->name);
 
-	if (modDeinit != NULL)
-		modDeinit(mod);
-	DestroyModInfo(mod->info);
+	mod_info_destroy(mod->info);
 	free(mod);
 }

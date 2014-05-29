@@ -1,68 +1,78 @@
-/** \file mod.h
- * Contains structs and functions for mods
+/**
+ * \file mod.h
  */
 
 #ifndef OPENHYDORAH_MOD_H
 #define OPENHYDORAH_MOD_H
 
-/** \struct SModInfo
+#include <stdint.h>
+
+/**
+ * \struct mod_info
  * \brief Contains information for a mod
  */
-typedef struct SModInfo {
-	char* name;
-	char* description;
-	char* filename;
-	void* handle;
-} ModInfo;
+struct mod_info {
+	char *name;
+	char *description;
+	char *filename;
+	void *handle;
+};
 
-/** \struct SMod
- * \brief Defines a mod
+/**
+ * \struct mod
  *
  * A mod is external code that
- * acts on and responds to specific calls
+ * acts on specific calls
  * required by the engine
  */
-typedef struct SMod {
-	ModInfo* info;
-} Mod;
+struct mod {
+	struct mod_info *info;
+	void (*update)(void*, uint32_t);
+	void (*init)(void*);
+	void (*destroy)(void*);
+};
 
-/** \brief Queries a mod for information
+/**
+ * \brief Queries a mod for information
  *
  * Calls a function in the mod that is expected
  * to return a specfic amount of information,
- * required to fill ModInfo.
+ * required to fill mod_info.
  *
  * \param[in] filename Path to the mod
  *
- * \return Pointer to a new ModInfo. NULL if error.
+ * \return The new mod_info or NULL on error.
  */
-ModInfo* GetModInfo(const char* filename);
+struct mod_info *mod_info_get(const char *filename);
 
-/** \brief Deallocates and cleans a ModInfo
- *
- * \param[in] info The ModInfo to destroy
+/**
+ * \param[in] info The mod_info to destroy
  */
-void DestroyModInfo(ModInfo* info);
+void mod_info_destroy(struct mod_info *info);
 
-/** \brief Allocates memory for a new Mod
- * and returns the pointer
+/**
+ * Creates the mod and informs the mod of initilization
  *
- * Creates the mod and informs the
- * mod of init
+ * \param[in] info The mod's information
  *
- * \param[in] info The Mod's information
- * 
- * \return Pointer to the new Mod
+ * \return The new Mod
  */
-Mod* CreateMod(ModInfo* info);
+struct mod *mod_create(struct mod_info *info);
 
-/** \brief Deallocates and cleans a Mod
- *
+/**
  * Destroys the mod, along with the ModInfo.
  * Also informs the mod of exit
  *
  * \param[in] mod The Mod to destroy
  */
-void DestroyMod(Mod* mod);
+void mod_destroy(struct mod *mod);
 
-#endif // OPENHYDORAH_MOD_H
+/**
+ * Calls the mod's update function
+ *
+ * \param[in] mod The mod to update
+ * \param[in] dt The delta time since last called
+ */
+void mod_update(struct mod *mod, uint32_t dt);
+
+#endif

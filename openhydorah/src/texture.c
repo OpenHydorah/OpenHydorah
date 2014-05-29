@@ -3,55 +3,27 @@
 #include <string.h>
 #include <physfs.h>
 
-TextureList* CreateTextureList(void)
+struct texture *texture_create(SDL_Texture *ptr, const char *name)
 {
-	TextureList* list = malloc(sizeof(TextureList));
-	list->texture = NULL;
-	list->next = NULL;
-	list->name = NULL;
+	struct texture *tex = malloc(sizeof(*tex));
+	tex->ptr = ptr;
+	tex->name = malloc(strlen(name) + 1);
+	strcpy(tex->name, name);
+	tex->ref_count = malloc(sizeof(uint32_t));
+	*tex->ref_count = 0;
+	list_init(&tex->list);
 
-	return list;
+	return tex;
 }
 
-void AddTextureToList(TextureList** list, const char* name, Texture* texture)
+struct texture *texture_create_file(const char *filename, SDL_Renderer *renderer)
 {
-	if (list == NULL) return;
+	PHYSFS_sint64 file_length = 0;
+	uint8_t *buf = NULL;
+	SDL_RWops *ops = NULL;
+	SDL_Texture *tex;
 
-	while (*list != NULL)
-		*list = (*list)->next;
-
-	(*list) = CreateTextureList();
-	(*list)->texture = texture;
-	size_t len = strlen(name);
-	(*list)->name = malloc(len+1);
-	strcpy((*list)->name, name);
-}
-
-Texture* GetTextureFromList(TextureList* list, const char* name)
-{
-	while (list != NULL)
-	{
-		if (strcmp(list->name, name) == 0)
-		{
-			return list->texture;
-		}
-
-		list = list->next;
-	}
-
-	return NULL;
-}
-
-Texture* CreateTextureFromFile(const char* filename)
-{
-	Texture* tex = NULL;
-	PHYSFS_File* file = NULL;
-	PHYSFS_sint64 fileLength = 0;
-	uint8_t* buf = NULL;
-	SDL_RWops* ops = NULL;
-
-	if (PHYSFS_exists(filename) == 0)
-	{
+	if (PHYSFS_exists(filename) == 0) {
 		SDL_LogWarn(
 				SDL_LOG_CATEGORY_APPLICATION,
 				"Could not find texture '%s'",
@@ -60,43 +32,85 @@ Texture* CreateTextureFromFile(const char* filename)
 		return NULL;
 	}
 
-	file = PHYSFS_openRead(filename);
-	fileLength = PHYSFS_fileLength(file);
-	buf = malloc(fileLength);
-	if (buf == NULL)
-	{
+	file_length = fs_read_buffer(filename, &buf);
+	SDL_Log("Reading texture - %s - size: %i", filename, file_length);
+
+	if (file_length == 0) {
 		SDL_LogError(
-				SDL_LOG_CATEGORY_SYSTEM,
-				"Failed to allocate data for texture '%s'",
+				SDL_LOG_CATEGORY_APPLICATION,
+				"Failed to read texture from file: '%s'\n",
 				filename
 				);
 		return NULL;
 	}
-	SDL_Log("Reading texture - %s - size: %i", filename,fileLength);
-	PHYSFS_read(file, buf, 1, fileLength);
-	PHYSFS_close(file);
-	ops = SDL_RWFromMem(buf, fileLength);
-	tex = IMG_LoadTexture_RW(g_renderer,ops,0);
+
+	ops = SDL_RWFromMem(buf, file_length);
+	tex = IMG_LoadTexture_RW(renderer, ops, 0);
 	free(buf);
 	SDL_RWclose(ops);
+
+	return texture_create(tex, filename);
+}
+
+struct texture *texture_copy(struct texture *texture)
+{
+	if (texture == NULL) {
+		SDL_LogError(
+				SDL_LOG_CATEGORY_APPLICATION,
+				"Trying to copy NULL pointer as texture"
+				);
+		return NULL;
+	}
+
+	struct texture *tex = malloc(sizeof(*tex));
+	tex->ptr = texture->ptr;
+	tex->ref_count = texture->ref_count;
+	tex->name = texture->name;
+	tex->list = texture->list;
+
+	(*tex->ref_count) += 1;
 
 	return tex;
 }
 
-void DestroyTexture(Texture* texture)
+void texture_destroy(struct texture *texture)
 {
-	SDL_Log("Destroying texture.");
-	SDL_DestroyTexture(texture);
+	if (texture == NULL)
+		return;
+
+	if (*(texture->ref_count) == 0) {
+		SDL_Log("Destroying texture.");
+		SDL_DestroyTexture(texture->ptr);
+		free(texture->ref_count);
+		free(texture->name);
+		list_remove(&texture->list);
+	} else
+		*(texture->ref_count) -= 1;
+
+	free(texture);
 }
 
-void DestroyTextureList(TextureList* list)
+void texture_list_destroy(struct list *textures)
 {
-	while (list != NULL)
+	if (textures == NULL)
+		return;
+
+	struct texture *iter;
+	struct texture *next;
+	list_for_each_entry_safe(iter, next, textures, list)
 	{
-		TextureList* temp = list;
-		list = list->next;
-		DestroyTexture(temp->texture);
-		free(temp->name);
-		free(temp);
+		texture_destroy(iter);
 	}
+}
+
+struct texture *texture_list_find(struct list *textures, const char *name)
+{
+	struct texture *iter;
+	list_for_each_entry(iter, textures, list)
+	{
+		if (strcmp(iter->name, name) == 0)
+			return iter;
+	}
+
+	return NULL;
 }

@@ -1,5 +1,5 @@
-/** \file sprite.h
- * Contains relevant structs and functions for sprites
+/**
+ * \file sprite.h
  */
 
 #ifndef OPENHYDORAH_SPRITE_H
@@ -12,61 +12,77 @@
 #include "animation.h"
 #include <jansson.h>
 
-/** \struct SSprite
- * \brief Defines a sprite
+/**
+ * \struct sprite
  *
  * A sprite is a texture with a number
  * of frames and animations.
  */
-typedef struct SSprite {
-	Texture* texture;
-	Frame* frames;
-	Animation* animations;
-	Frame* currentFrame;
-	Animation* activeAnimation;
-} Sprite;
+struct sprite {
+	struct texture *texture;
+	struct frame **frames;
+	struct animation **animations;
+	uint32_t num_frames;
+	uint32_t num_animations;
 
-/** \brief Allocates memory for a Sprite,
- * and returns the pointer
- *
+	struct list list;
+};
+
+/**
  * \param[in] texture The sprite's texture
  * \param[in] frames The sprite's frames
  * \param[in] defaultFrame The frame to use by default.
  * If NULL, then it's the first in \em frames
  * \param[in] animations The sprite's animations
  *
- * \return Pointer to the new Sprite. NULL if error.
+ * \return The new sprite or NULL on error.
  */
-Sprite* CreateSprite(Texture* texture, Frame* frames, Frame* defaultFrame, Animation* animations);
+struct sprite *sprite_create(struct texture *texture, struct frame **frames,
+		uint32_t num_frames, struct animation **animations,
+		uint32_t num_animations);
 
-/** \brief Creates a sprite from a JSON object
+/**
+ * \brief Creates a sprite from a JSON object
  *
- * \params[in] root The JSON object
- * \params[out] textures The list to add the sprite textures to
- * \return Pointer to the new Sprite
+ * \param[in] root The JSON object
+ * \param[out] textures The list to add the sprite textures to
+ * \param[in] renderer The renderer to use for texture loading
+ *
+ * \return The new sprite or NULL on error
  */
-Sprite* CreateSpriteFromJSON(json_t* root, TextureList** textures);
+struct sprite *sprite_create_json(json_t *root, struct list *textures,
+		SDL_Renderer *renderer);
 
-/** \brief Creates a sprite from a file
+/**
+ * \brief Creates a sprite from a file
  *
- * \params[in] filename The file to read from
- * \params[out] textures The list to add the sprite textures to
- * \return Pointer to the new Sprite
+ * \param[in] filename The file to read from
+ * \param[out] textures The list to add the sprite textures to
+ * \param[in] renderer The renderer to use for texture loading
+ *
+ * \return The new sprite or NULL on error
  */
-Sprite* CreateSpriteFromFile(const char* filename, TextureList** textures);
+struct sprite *sprite_create_file(const char *filename, struct list *textures,
+		SDL_Renderer *renderer);
 
-/** \brief Deallocates and cleans up a Sprite
- *
+/**
  * \param[in] sprite The sprite to destroy
  */
-void DestroySprite(Sprite* sprite);
+void sprite_destroy(struct sprite *sprite);
 
-/** \brief Draws the sprite at the specified point
+/**
+ * \param[in] sprites The list of sprites to destroy
+ */
+void sprite_list_destroy(struct list *sprites);
+
+/**
+ * \brief Draws the sprite at the specified point
  *
  * \param[in] sprite Sprite to draw
  * \param[in] point The point to draw at
  * \param[in] renderer The renderer to use
  */
-void DrawSpriteAtPoint(Sprite* sprite, SDL_Point point, SDL_Renderer* renderer);
+void sprite_draw_point(struct sprite *sprite, SDL_Point point,
+		SDL_Renderer *renderer);
 
-#endif // OPENHYDORAH_SPRITE_H
+#endif

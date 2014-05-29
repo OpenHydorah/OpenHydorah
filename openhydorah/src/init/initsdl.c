@@ -1,6 +1,6 @@
 #include "init.h"
 
-int InitSDL(SDL_Window** window, SDL_Renderer** renderer,
+int init_sdl(SDL_Window** window, SDL_Renderer** renderer,
 		const int width, const int height)
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {

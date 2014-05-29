@@ -1,5 +1,5 @@
-/** \file texture.h
- * Contains relevant structs and functions for textures
+/**
+ * \file texture.h
  */
 
 #ifndef OPENHYDORAH_TEXTURE_H
@@ -7,71 +7,65 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
+#include "list.h"
 
-/** \struct Texture
- * \brief Defines a texture
+/**
+ * \struct texture
  *
  * A texture should represent visual data,
  * either from a file, or memory data.
  */
-typedef SDL_Texture Texture;
+struct texture {
+	SDL_Texture *ptr;
+	uint32_t *ref_count;
+	char *name;
 
-/** \struct STextureList
- * \brief Defines a list of textures
+	struct list list;
+};
+
+/**
+ * \param[in] ptr The texture pointer
+ * \param[in] name The texture name
  *
- * The list takes ownership of the texture,
- * and destroys them when it is destroyed.
- *
- * typedef as TextureList
+ * \return The new texture
  */
-typedef struct STextureList {
-	Texture* texture;
-	char* name;
-	struct STextureList* next;
-} TextureList;
+struct texture *texture_create(SDL_Texture *ptr, const char *name);
 
-/** \brief Allocates memory for a TextureList,
- * and returns the pointer
- *
- * \return Pointer to the new TextureList
- */
-TextureList* CreateTextureList(void);
-
-/** \brief Adds a texture to the provided list
- *
- * \param[out] list The list to add the texture to
- * \param[in] name The name to associate the texture with
- * \param[in] texture The texture to add
- */
-void AddTextureToList(TextureList** list, const char* name, Texture* texture);
-
-/** \brief Get a texture from the provided list
- *
- * \param[in] list The list to search through
- * \param[in] name The name that was associated with the texture
- * \return A pointer to the texture, or NULL if it was not found
- */
-Texture* GetTextureFromList(TextureList* list, const char* name);
-
-/** \brief Creates a new texture using data from the specified file
+/**
+ * \brief Creates a new texture using data from the specified file
  *
  * \param[in] filename The path to the file to read from
+ * \param[in] renderer The renderer to use for texture loading
+ *
  * \return The new texture, or NULL if there was an error
  */
-Texture* CreateTextureFromFile(const char* filename);
+struct texture *texture_create_file(const char *filename, SDL_Renderer *renderer);
 
-/** \brief Deallocate and cleanup a texture
+/**
+ * \brief Copy a texture and increment the ref count
  *
+ * \param[in] texture Texture to copy
+ *
+ * \return The new copy of the texture
+ */
+struct texture *texture_copy(struct texture *texture);
+
+/**
  * \param[in] texture The texture to destroy
  */
-void DestroyTexture(Texture* texture);
+void texture_destroy(struct texture *texture);
 
-/** \brief Deallocate and cleanup a list of textures
- *
- * Note that this destroys all textures in the list
- *
- * \param[in] list The list to destroy
+/**
+ * \param[in] textures The texture list to destroy
  */
-void DestroyTextureList(TextureList* list);
+void texture_list_destroy(struct list *textures);
 
-#endif // OPENHYDORAH_TEXTURE_H
+/**
+ * \param[in] textures The texture list to search through
+ * \param[in] name The name to search for
+ *
+ * \return The texture if found, NULL otherwise
+ */
+struct texture *texture_list_find(struct list *textures, const char *name);
+
+#endif

@@ -1,0 +1,20 @@
+{
+	"preset": {
+		"up": {
+			"type": "key",
+			"key":	"UP"
+		},
+		"down": {
+			"type": "key",
+			"key":	"DOWN"
+		},
+		"left": {
+			"type": "key",
+			"key":	"LEFT"
+		},
+		"right": {
+			"type": "key",
+			"key":	"RIGHT"
+		}
+	}
+}

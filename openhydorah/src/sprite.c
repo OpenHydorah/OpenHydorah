@@ -5,11 +5,12 @@
 #include <string.h>
 #include <stdlib.h>
 
-Sprite* CreateSprite(Texture* texture, Frame* frames, Frame* defaultFrame, Animation* animations)
+struct sprite *sprite_create(struct texture *texture, struct frame **frames,
+		uint32_t num_frames, struct animation **animations,
+		uint32_t num_animations)
 {
-	Sprite* sprite = malloc(sizeof(Sprite));
-	if (sprite == NULL)
-	{
+	struct sprite *sprite = malloc(sizeof(*sprite));
+	if (sprite == NULL) {
 		SDL_LogError(
 				SDL_LOG_CATEGORY_APPLICATION,
 				"Failed to allocate data for sprite"
@@ -20,31 +21,24 @@ Sprite* CreateSprite(Texture* texture, Frame* frames, Frame* defaultFrame, Anima
 	sprite->texture = texture;
 	sprite->frames = frames;
 	sprite->animations = animations;
-	if (defaultFrame == NULL)
-		sprite->currentFrame = sprite->frames;
-	else
-		sprite->currentFrame = defaultFrame;
-	sprite->activeAnimation = NULL;
+	sprite->num_frames = num_frames;
+	sprite->num_animations = num_animations;
 
 	return sprite;
 }
 
-Sprite* CreateSpriteFromJSON(json_t* root, TextureList** textures)
+struct sprite *sprite_create_json(json_t *root, struct list *textures,
+		SDL_Renderer *renderer)
 {
-	json_t* framesJSON = NULL;
-	json_t* defaultFrameJSON = NULL;
-	json_t* animationsJSON = NULL;
-	json_t* imgJSON = NULL;
-
 	uint32_t i = 0;
-	Sprite* sprite = NULL;
-	Texture* texture = NULL;
-	Frame* frames = NULL;
-	Frame* defaultFrame = NULL;
-	Animation* animations = NULL;
+	struct texture *texture = NULL;
+	struct frame **frames;
+	struct animation **animations;
+	uint32_t num_frames;
+	uint32_t num_animations;
+	json_t *iter_json;
 
-	if (!json_is_object(root))
-	{
+	if (!json_is_object(root)) {
 		SDL_LogError(
 				SDL_LOG_CATEGORY_APPLICATION,
 				"Invalid sprite file format\n"
@@ -52,80 +46,67 @@ Sprite* CreateSpriteFromJSON(json_t* root, TextureList** textures)
 		return NULL;
 	}
 
-	imgJSON = json_object_get(root, "img");
-	if (!json_is_string(imgJSON))
-	{
+	iter_json = json_object_get(root, "img");
+	if (!json_is_string(iter_json)) {
 		SDL_LogError(
 			SDL_LOG_CATEGORY_APPLICATION,
 			"Could not find 'img' value\n"
 			);
-		json_decref(root);
 		return NULL;
 	}
 
-	texture = GetTextureFromList(*textures, json_string_value(imgJSON));
-	if (texture == NULL)
-	{
-		texture = CreateTextureFromFile(json_string_value(imgJSON));
-		AddTextureToList(textures, json_string_value(imgJSON), texture);
+	texture = texture_list_find(textures, json_string_value(iter_json));
+	if (texture == NULL) {
+		texture = texture_create_file(json_string_value(iter_json), renderer);
+		list_append(&texture->list, textures);
 	}
 
-	framesJSON = json_object_get(root, "frames");
-	if (!json_is_array(framesJSON))
-	{
+	iter_json = json_object_get(root, "frames");
+	if (!json_is_array(iter_json)) {
 		SDL_LogError(
 			SDL_LOG_CATEGORY_APPLICATION,
 			"Could not find 'frames' array\n"
 			);
-		json_decref(root);
 		return NULL;
 	}
 
-	frames = CreateFramesFromJSON(framesJSON);
+	frames = frame_array_create_json(iter_json, &num_frames);
 
-	animationsJSON = json_object_get(root, "animations");
-	if (json_is_array(animationsJSON))
-	{
-		animations = CreateAnimationsFromJSON(animationsJSON, frames);
-	}
+	iter_json = json_object_get(root, "animations");
+	if (json_is_array(iter_json))
+		animations = animation_array_create_json(iter_json,
+				frames, num_frames, &num_animations);
 
-	defaultFrameJSON = json_object_get(root, "default_frame");
-	if (json_is_string(defaultFrameJSON))
-	{
-		defaultFrame = FindFrameByName(frames,
-				json_string_value(defaultFrameJSON));
-		if (defaultFrame == NULL)
-		{
-			SDL_LogWarn(
-				SDL_LOG_CATEGORY_APPLICATION,
-				"Could not find frame '%s' for default_frame, for sprite\n",
-				json_string_value(defaultFrameJSON)
-				);
-		}
-	}
-
-	sprite = CreateSprite(texture, frames, defaultFrame, animations);
-
-	return sprite;
+	json_decref(root);
+	return sprite_create(texture_copy(texture),
+			frames, num_frames, animations, num_animations);
 }
 
-Sprite* CreateSpriteFromFile(const char* filename, TextureList** textures)
+struct sprite *sprite_create_file(const char *filename, struct list *textures,
+		SDL_Renderer *renderer)
 {
-	PHYSFS_sint64 fileLength = 0;
-	uint8_t* buf = NULL;
-	json_t* rootNode = NULL;
+	PHYSFS_sint64 file_length = 0;
+	uint8_t *buf = NULL;
+	json_t *root_node = NULL;
 	json_error_t error;
-	Sprite* sprite = NULL;
 
-	fileLength = ReadFileToBuffer(filename, &buf);
-	SDL_Log("Reading sprite - %s - size: %i", filename, fileLength);
+	file_length = fs_read_buffer(filename, &buf);
+	if (file_length == 0) {
+		SDL_LogError(
+				SDL_LOG_CATEGORY_APPLICATION,
+				"Failed to read sprite from file: '%s'\n",
+				filename
+				);
+		return NULL;
+	}
 
-	rootNode = json_loadb(buf,fileLength,0,&error);
+	SDL_Log("Reading sprite - %s - size: %i", filename, file_length);
+
+	root_node = json_loadb(buf, file_length, 0, &error);
 	free(buf);
 	buf = NULL;
 
-	if (rootNode == NULL)
-	{
+	if (root_node == NULL) {
 		SDL_LogError(
 				SDL_LOG_CATEGORY_APPLICATION,
 				"JSON error for file '%s' - line: %d - message: %s.",
@@ -134,60 +115,62 @@ Sprite* CreateSpriteFromFile(const char* filename, TextureList** textures)
 		return NULL;
 	}
 
-	sprite = CreateSpriteFromJSON(rootNode, textures);
-	
-	json_decref(rootNode);
-
-	return sprite;
+	return sprite_create_json(root_node, textures, renderer);
 }
 
-void DestroyFrames(Frame* frames)
+void sprite_destroy(struct sprite *sprite)
 {
-	while (frames != NULL)
-	{
-		Frame* tempIter = frames;
-		frames = frames->next;
-		free(tempIter->name);
-		free(tempIter);
-	}
-}
-
-void DestroySprite(Sprite* sprite)
-{
-	if (sprite == NULL) return;
+	if (sprite == NULL)
+		return;
 
 	SDL_Log("Destroying sprite");
+	uint32_t i;
+	for (i = 0; i < sprite->num_animations; i++)
+		animation_destroy(sprite->animations[i]);
 
-	DestroyFrames(sprite->frames);
+	free(sprite->animations);
+
+	for (i = 0; i < sprite->num_frames; i++)
+		frame_destroy(sprite->frames[i]);
+
+	free(sprite->frames);
+
+	texture_destroy(sprite->texture);
 	free(sprite);
 }
 
-void DrawSpriteAtPoint(Sprite* sprite, SDL_Point point, SDL_Renderer* renderer)
+void sprite_list_destroy(struct list *sprites)
 {
-	if (sprite == NULL || sprite->currentFrame == NULL)
+	if (sprites == NULL)
+		return;
+
+	struct sprite *iter;
+	struct sprite *next;
+	list_for_each_entry_safe(iter, next, sprites, list)
+	{
+		sprite_destroy(iter);
+	}
+}
+
+void sprite_draw_point(struct sprite *sprite, SDL_Point point,
+		SDL_Renderer *renderer)
+{
+	if (sprite == NULL)
 		return;
 
 	SDL_Rect rect;
 	rect.x = point.x;
 	rect.y = point.y;
-	rect.w = sprite->currentFrame->rect.w;
-	rect.h = sprite->currentFrame->rect.h;
+	rect.w = sprite->frames[0]->rect.w;
+	rect.h = sprite->frames[0]->rect.h;
 
-	if (sprite->texture == NULL)
-	{
+	if (sprite->texture == NULL) {
 		SDL_SetRenderDrawColor(renderer, 255, 105, 180, 255);
 		SDL_RenderFillRect(renderer, &rect);
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		return;
 	}
 
-	Texture* tex = sprite->texture;
-	SDL_RenderCopy(renderer, tex, &(sprite->currentFrame->rect), &rect);
-
-	if (sprite->activeAnimation != NULL)
-	{
-		sprite->currentFrame = sprite->currentFrame->next;
-		if (sprite->currentFrame == NULL)
-			sprite->currentFrame = sprite->activeAnimation->frames;
-	}
+	SDL_Texture *tex = sprite->texture->ptr;
+	SDL_RenderCopy(renderer, tex, &(sprite->frames[0]->rect), &rect);
 }

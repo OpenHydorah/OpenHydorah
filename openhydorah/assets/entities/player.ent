@@ -1,0 +1,10 @@
+{
+	"name": "player",
+	"sprite": "/sprites/player.spr",
+	"collision": {
+		"x": 0,
+		"y": 0,
+		"width": 16,
+		"height": 12
+	}
+}
