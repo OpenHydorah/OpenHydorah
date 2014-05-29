@@ -1,8 +1,9 @@
 #include "frame.h"
+#include <string.h>
 
-Frame* CreateFrame(void)
+struct frame *frame_create(const char *name, const SDL_Rect rect)
 {
-	Frame* frame = malloc(sizeof(Frame));
+	struct frame* frame = malloc(sizeof(*frame));
 
 	if (frame == NULL)
 	{
@@ -13,13 +14,14 @@ Frame* CreateFrame(void)
 		return NULL;
 	}
 	
-	frame->name = NULL;
-	frame->next = NULL;
+	frame->name = malloc(strlen(name) + 1);
+	strcpy(frame->name, name);
+	frame->rect = rect;
 
 	return frame;
 }
 
-Frame* CreateFrameFromJSON(json_t* root)
+struct frame *frame_create_json(json_t *root)
 {
 	if (!json_is_object(root))
 	{
@@ -31,12 +33,12 @@ Frame* CreateFrameFromJSON(json_t* root)
 		return NULL;
 	}
 
-	json_t* name = NULL;
-	json_t *x,*y,*width,*height;
-	Frame* frame = NULL;
+	json_t *iter_json = NULL;
+	const char* name;
+	SDL_Rect rect;
 
-	name = json_object_get(root, "name");
-	if (!json_is_string(name))
+	iter_json = json_object_get(root, "name");
+	if (!json_is_string(iter_json))
 	{
 		SDL_LogError(
 			SDL_LOG_CATEGORY_APPLICATION,
@@ -46,66 +48,60 @@ Frame* CreateFrameFromJSON(json_t* root)
 		return NULL;
 	}
 
-	frame = CreateFrame();
-	if (frame == NULL)
-		return NULL;
+	name = json_string_value(iter_json);
 
-	size_t size = strlen(json_string_value(name));
-	frame->name = malloc(size + 1);
-	strcpy(frame->name, json_string_value(name));
-
-	x = json_object_get(root, "x");
-	if (!json_is_integer(x))
+	iter_json = json_object_get(root, "x");
+	if (!json_is_integer(iter_json))
 	{
 		SDL_LogWarn(
 				SDL_LOG_CATEGORY_APPLICATION,
 				"Could not get x value for frame '%s'",
-				frame->name
+				name
 				);
 	}
 	else
-		frame->rect.x = json_integer_value(x);
+		rect.x = json_integer_value(iter_json);
 
-	y = json_object_get(root, "y");
-	if (!json_is_integer(y))
+	iter_json = json_object_get(root, "y");
+	if (!json_is_integer(iter_json))
 	{
 		SDL_LogWarn(
 				SDL_LOG_CATEGORY_APPLICATION,
 				"Could not get y value for frame '%s'",
-				frame->name
+				name
 				);
 	}
 	else
-		frame->rect.y = json_integer_value(y);
+		rect.y = json_integer_value(iter_json);
 
-	width = json_object_get(root, "width");
-	if (!json_is_integer(width))
+	iter_json = json_object_get(root, "width");
+	if (!json_is_integer(iter_json))
 	{
 		SDL_LogWarn(
 				SDL_LOG_CATEGORY_APPLICATION,
 				"Could not get width value for frame '%s'",
-				frame->name
+				name
 				);
 	}
 	else
-		frame->rect.w = json_integer_value(width);
+		rect.w = json_integer_value(iter_json);
 
-	height = json_object_get(root, "height");
-	if (!json_is_integer(height))
+	iter_json = json_object_get(root, "height");
+	if (!json_is_integer(iter_json))
 	{
 		SDL_LogWarn(
 				SDL_LOG_CATEGORY_APPLICATION,
 				"Could not get height value for frame '%s'",
-				frame->name
+				name
 				);
 	}
 	else
-		frame->rect.h = json_integer_value(height);
+		rect.h = json_integer_value(iter_json);
 
-	return frame;
+	return frame_create(name, rect);
 }
 
-Frame* CreateFramesFromJSON(json_t* root)
+struct frame **frame_array_create_json(json_t *root, uint32_t *num)
 {
 	if (!json_is_array(root))
 	{
@@ -116,16 +112,19 @@ Frame* CreateFramesFromJSON(json_t* root)
 		return NULL;
 	}
 
-	Frame* frames = NULL;
-	Frame** frameIter = &frames;
+	*num = json_array_size(root);
+	if (*num == 0)
+		return NULL;
+
+	struct frame **frames = calloc(*num, sizeof(*frames));
 	uint32_t i = 0;
 
-	for (i = 0; i < json_array_size(root); i++)
+	for (i = 0; i < *num; i++)
 	{
-		json_t* frameNode;
+		json_t *frame_node;
 
-		frameNode = json_array_get(root, i);
-		if (!json_is_object(frameNode))
+		frame_node = json_array_get(root, i);
+		if (!json_is_object(frame_node))
 		{
 			SDL_LogWarn(
 				SDL_LOG_CATEGORY_APPLICATION,
@@ -134,24 +133,26 @@ Frame* CreateFramesFromJSON(json_t* root)
 			continue;
 		}
 
-		while (*frameIter != NULL)
-			frameIter = &((*frameIter)->next);
-
-		*frameIter = CreateFrameFromJSON(frameNode);
+		frames[i] = frame_create_json(frame_node);
 	}
 
 	return frames;
 }
 
-Frame* FindFrameByName(Frame* frames, const char* name)
+struct frame *frame_array_find(struct frame **frames, uint32_t num, const char *name)
 {
-	while (frames != NULL)
+	uint32_t i;
+	for(i = 0; i < num; i++)
 	{
-		if (strcmp(frames->name, name) == 0)
-			return frames;
-
-		frames = frames->next;
+		if (strcmp(frames[i]->name, name) == 0)
+			return frames[i];
 	}
 
-	return frames;
+	return NULL;
+}
+
+void frame_destroy(struct frame *frame)
+{
+	free(frame->name);
+	free(frame);
 }

@@ -1,0 +1,22 @@
+{
+	"img":"/graphics/sprites/spr_bueno.png",
+	"default_frame": "1",
+	"frames": [
+		{
+			"name": "1",
+			"x": 102,
+			"y": 0,
+			"width": 16,
+			"height": 12
+		}
+	],
+	"animations": [
+		{
+			"name": "animation",
+			"start": "1",
+			"frames": [
+				"1"
+			]
+		}
+	]
+}

@@ -1,12 +1,17 @@
 {
-	"objects": [
+	"entities": [
 		{
-			"object": "/objects/asteroid_big.obj",
+			"entity": "/entities/player.ent",
+			"x": 0,
+			"y": 100
+		},
+		{
+			"entity": "/entities/asteroid_big.ent",
 			"x": 150,
 			"y": 100
 		},
 		{
-			"object": {
+			"entity": {
 				"sprite": "sprites/asteroid_small.spr",
 				"collision": {
 					"x": 0,
@@ -18,7 +23,5 @@
 			"x": 200,
 			"y": 300
 		}
-	],
-	"actors": [
 	]
 }

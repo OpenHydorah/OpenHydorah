@@ -1,6 +1,6 @@
 #include "init.h"
 
-int InitFS(const char* arg0)
+int init_fs(const char *arg0)
 {
 	PHYSFS_init(arg0);
 	if (PHYSFS_mount("assets", NULL, 0) == 0)
@@ -83,20 +83,20 @@ int InitFS(const char* arg0)
 		return 1;
 	}
 
-	if (PHYSFS_mount("assets/maps", "/maps", 1) == 0)
+	if (PHYSFS_mount("assets/scenes", "/scenes", 1) == 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-				"Failed to mount assets/maps folder. %s\n",
+				"Failed to mount assets/scenes folder. %s\n",
 				PHYSFS_getLastError()
 				);
 
 		return 1;
 	}
 
-	if (PHYSFS_mount("assets/objects", "/objects", 1) == 0)
+	if (PHYSFS_mount("assets/entities", "/entities", 1) == 0)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-				"Failed to mount assets/objects folder. %s\n",
+				"Failed to mount assets/entities folder. %s\n",
 				PHYSFS_getLastError()
 				);
 

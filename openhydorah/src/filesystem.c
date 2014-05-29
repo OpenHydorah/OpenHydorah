@@ -1,10 +1,10 @@
 #include "filesystem.h"
 #include <SDL.h>
 
-PHYSFS_sint64 ReadFileToBuffer(const char* filename, uint8_t** buf)
+PHYSFS_sint64 fs_read_buffer(const char *filename, uint8_t **buf)
 {
 	PHYSFS_File* file = NULL;
-	PHYSFS_sint64 fileLength = 0;
+	PHYSFS_sint64 file_length = 0;
 
 	if (PHYSFS_exists(filename) == 0)
 	{
@@ -27,10 +27,10 @@ PHYSFS_sint64 ReadFileToBuffer(const char* filename, uint8_t** buf)
 		return 0;
 	}
 
-	fileLength = PHYSFS_fileLength(file);
-	(*buf) = malloc(fileLength);
-	PHYSFS_read(file, (*buf), 1, fileLength);
+	file_length = PHYSFS_fileLength(file);
+	(*buf) = malloc(file_length);
+	PHYSFS_read(file, (*buf), 1, file_length);
 	PHYSFS_close(file);
 
-	return fileLength;
+	return file_length;
 }
