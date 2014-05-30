@@ -3,7 +3,10 @@
 		{
 			"entity": "/entities/player.ent",
 			"x": 0,
-			"y": 100
+			"y": 100,
+			"properties": {
+				"speed": 200
+			}
 		},
 		{
 			"entity": "/entities/asteroid_big.ent",
