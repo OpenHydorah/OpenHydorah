@@ -31,6 +31,7 @@ mod_init engine = do
 	c_engine_load_scene engine scene
 	free preset
 	free scene
+
 	return ()
 
 foreign export ccall mod_destroy
@@ -50,6 +51,7 @@ mod_update engine delta = do
 	up <- action_value engine "up"
 	down <- action_value engine "down"
 
-	entity_translate player ((right - left) * 80 * dt, (down - up) * 80 * dt)
+	number <- entity_get_number_property player "speed"
+	entity_translate player ((right - left) * number * dt, (down - up) * number * dt)
 
 	return ()

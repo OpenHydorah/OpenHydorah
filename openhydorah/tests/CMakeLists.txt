@@ -1,6 +1,6 @@
-set(SRC tests_main.c tests_list.c tests_texture.c tests_entity.c tests_sprite.c)
+set(SRC tests_main.c tests_list.c tests_texture.c tests_entity.c tests_sprite.c tests_property.c)
 set(OH_SRC ../src/list.c ../src/texture.c ../src/filesystem.c ../src/entity.c
-	../src/sprite.c ../src/frame.c ../src/animation.c)
+	../src/sprite.c ../src/frame.c ../src/animation.c ../src/property.c)
 
 include_directories(../include)
 
