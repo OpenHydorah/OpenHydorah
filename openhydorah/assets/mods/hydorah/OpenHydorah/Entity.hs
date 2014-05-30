@@ -24,6 +24,12 @@ foreign import ccall "entity_get_position_x" c_entity_get_position_x
 foreign import ccall "entity_get_position_y" c_entity_get_position_y
 	:: Ptr (a) -> Float
 
+foreign import ccall "entity_get_number_property" c_entity_get_number_property
+	:: Ptr (a) -> CString -> Float
+
+foreign import ccall "entity_get_string_property" c_entity_get_string_property
+	:: Ptr (a) -> CString -> CString
+
 foreign import ccall "entity_set_position_x" c_entity_set_position_x
 	:: Ptr (a) -> Float -> IO ()
 
@@ -33,10 +39,21 @@ foreign import ccall "entity_set_position_y" c_entity_set_position_y
 foreign import ccall "entity_list_find_first" c_entity_list_find_first
 	:: Ptr (a) -> CString -> Ptr (b)
 
+foreign import ccall "entity_set_number_property" c_entity_set_number_property
+	:: Ptr (a) -> Float -> CString -> IO ()
+
 entity_get_position ent = (x, y)
 	where
 		x = c_entity_get_position_x ent
 		y = c_entity_get_position_y ent
+
+entity_get_number_property ent str = withCAString str (property ent)
+	where
+		property ent cstr = return $ c_entity_get_number_property ent cstr
+
+entity_get_string_property ent str = withCAString str (property ent)
+	where
+		property ent cstr = peekCString (c_entity_get_string_property ent cstr)
 
 entity_set_position ent (x,y) =
 	do

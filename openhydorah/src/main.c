@@ -1,4 +1,6 @@
 #include "engine.h"
+#include "property.h"
+#include <stdio.h>
 
 int main(int argc, const char *argv[])
 {

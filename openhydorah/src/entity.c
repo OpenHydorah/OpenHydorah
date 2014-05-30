@@ -20,6 +20,7 @@ struct entity *entity_create(struct sprite *sprite, const char *name,
 
 	list_init(&ent->children);
 	list_init(&ent->branch);
+	list_init(&ent->properties);
 
 	ent->position.x = 0.0f;
 	ent->position.y = 0.0f;
@@ -54,11 +55,18 @@ void entity_destroy(struct entity *entity)
 	if (entity == NULL)
 		return;
 
-	struct entity *iter;
-	struct entity *next;
-	list_for_each_entry_safe(iter, next, &entity->children, branch)
+	struct entity *child_iter;
+	struct entity *child_next;
+	list_for_each_entry_safe(child_iter, child_next, &entity->children, branch)
 	{
-		entity_destroy(iter);
+		entity_destroy(child_iter);
+	}
+
+	struct property *p_iter;
+	struct property *p_next;
+	list_for_each_entry_safe(p_iter, p_next, &entity->properties, list)
+	{
+		property_destroy(p_iter);
 	}
 
 	sprite_destroy(entity->sprite);
@@ -125,6 +133,9 @@ uint8_t entity_list_create_json(struct list *ent_list, json_t *root,
 					textures, renderer);
 		}
 
+		obj_json = json_object_get(arr_json, "properties");
+		if (json_is_object(obj_json))
+			property_list_create_json(&ent->properties, obj_json);
 	}
 
 	return 0;
@@ -162,6 +173,10 @@ struct entity *entity_create_json(json_t *root, struct list *textures,
 	if (json_is_array(iter_json))
 		entity_list_create_json(&ent->children,
 				iter_json, textures, ent, renderer);
+
+	iter_json = json_object_get(root, "properties");
+	if (json_is_object(iter_json))
+		property_list_create_json(&ent->properties, iter_json);
 
 	return ent;
 }
@@ -216,6 +231,42 @@ struct entity *entity_list_find_first(struct list *entities, const char *name)
 	return NULL;
 }
 
+float entity_get_number_property(struct entity *ent, const char *name)
+{
+	struct property *iter;
+	list_for_each_entry(iter, &ent->properties, list)
+	{
+		if (strcmp(iter->name, name) == 0)
+			return iter->value.n;
+	}
+
+	return 0.0f;
+}
+
+uint8_t entity_get_bool_property(struct entity *ent, const char *name)
+{
+	struct property *iter;
+	list_for_each_entry(iter, &ent->properties, list)
+	{
+		if (strcmp(iter->name, name) == 0)
+			return iter->value.b;
+	}
+
+	return 0;
+}
+
+const char *entity_get_string_property(struct entity *ent, const char *name)
+{
+	struct property *iter;
+	list_for_each_entry(iter, &ent->properties, list)
+	{
+		if (strcmp(iter->name, name) == 0)
+			return iter->value.s;
+	}
+
+	return "";
+}
+
 struct sprite *entity_get_sprite(struct entity *entity)
 {
 	return entity->sprite;
@@ -249,4 +300,54 @@ void entity_set_position_x(struct entity *entity, float x)
 void entity_set_position_y(struct entity *entity, float y)
 {
 	entity->position.y = y;
+}
+
+void entity_set_number_property(struct entity *ent, float value, const char *name)
+{
+	struct property *iter;
+	list_for_each_entry(iter, &ent->properties, list)
+	{
+		if (strcmp(iter->name, name) == 0) {
+			iter->type = NUMBER;
+			iter->value.n = value;
+			return;
+		}
+	}
+
+	list_append(&property_create_number(value, name)->list,
+			&ent->properties);
+}
+
+void entity_set_bool_property(struct entity *ent, uint8_t value, const char *name)
+{
+	struct property *iter;
+	list_for_each_entry(iter, &ent->properties, list)
+	{
+		if (strcmp(iter->name, name) == 0) {
+			iter->type = BOOL;
+			iter->value.b = value;
+			return;
+		}
+	}
+
+	list_append(&property_create_bool(value, name)->list,
+			&ent->properties);
+}
+
+void entity_set_string_property(struct entity *ent, const char *value, const char *name)
+{
+	struct property *iter;
+	list_for_each_entry(iter, &ent->properties, list)
+	{
+		if (strcmp(iter->name, name) == 0) {
+			iter->type = STRING;
+			free(iter->value.s);
+			iter->value.s = malloc(strlen(value) + 1);
+			strcpy(iter->value.s, value);
+			return;
+		}
+	}
+
+	list_append(&property_create_string(value, name)->list,
+			&ent->properties);
 }

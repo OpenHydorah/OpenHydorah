@@ -10,6 +10,7 @@
 #include <jansson.h>
 #include "list.h"
 #include "vector.h"
+#include "property.h"
 
 /**
  * \struct entity
@@ -36,6 +37,7 @@ struct entity {
 
 	struct list children;
 	struct list branch;
+	struct list properties;
 };
 
 /**
@@ -135,9 +137,15 @@ const char *entity_get_name(struct entity *entity);
 struct entity *entity_get_parent(struct entity *entity);
 float entity_get_position_x(struct entity *entity);
 float entity_get_position_y(struct entity *entity);
+float entity_get_number_property(struct entity *ent, const char *name);
+uint8_t entity_get_bool_property(struct entity *ent, const char *name);
+const char *entity_get_string_property(struct entity *ent, const char *name);
 
 /* SETTERS */
 void entity_set_position_x(struct entity *entity, float x);
 void entity_set_position_y(struct entity *entity, float y);
+void entity_set_number_property(struct entity *ent, float value, const char *name);
+void entity_set_bool_property(struct entity *ent, uint8_t value, const char *name);
+void entity_set_string_property(struct entity *ent, const char *value, const char *name);
 
 #endif

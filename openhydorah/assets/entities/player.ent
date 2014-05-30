@@ -6,5 +6,8 @@
 		"y": 0,
 		"width": 16,
 		"height": 12
+	},
+	"properties": {
+		"speed": 100
 	}
 }
