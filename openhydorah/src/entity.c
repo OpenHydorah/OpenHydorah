@@ -21,6 +21,7 @@ struct entity *entity_create(struct sprite *sprite, const char *name,
 	list_init(&ent->children);
 	list_init(&ent->branch);
 	list_init(&ent->properties);
+	list_init(&ent->col_objs);
 
 	ent->position.x = 0.0f;
 	ent->position.y = 0.0f;
@@ -48,6 +49,12 @@ void entity_draw(struct entity *entity, SDL_Renderer *renderer)
 	{
 		entity_draw(iter, renderer);
 	}
+
+	struct collision_object *col_iter;
+	list_for_each_entry(col_iter, &entity->col_objs, list)
+	{
+		collision_object_draw(col_iter, renderer);
+	}
 }
 
 void entity_destroy(struct entity *entity)
@@ -67,6 +74,13 @@ void entity_destroy(struct entity *entity)
 	list_for_each_entry_safe(p_iter, p_next, &entity->properties, list)
 	{
 		property_destroy(p_iter);
+	}
+
+	struct collision_object *col_iter;
+	struct collision_object *col_next;
+	list_for_each_entry_safe(col_iter, col_next, &entity->col_objs, list)
+	{
+		collision_object_destroy(col_iter);
 	}
 
 	sprite_destroy(entity->sprite);
@@ -177,6 +191,11 @@ struct entity *entity_create_json(json_t *root, struct list *textures,
 	iter_json = json_object_get(root, "properties");
 	if (json_is_object(iter_json))
 		property_list_create_json(&ent->properties, iter_json);
+
+	iter_json = json_object_get(root, "collisions");
+	if (json_is_array(iter_json))
+		collision_object_list_create_json(&ent->col_objs, iter_json,
+				&ent->position);
 
 	return ent;
 }
@@ -290,6 +309,11 @@ float entity_get_position_x(struct entity *entity)
 float entity_get_position_y(struct entity *entity)
 {
 	return entity->position.y;
+}
+
+struct list *entity_get_collision_objects(struct entity *ent)
+{
+	return &ent->col_objs;
 }
 
 void entity_set_position_x(struct entity *entity, float x)
