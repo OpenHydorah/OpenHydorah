@@ -1,9 +1,12 @@
 {
+	"name": "asteroid",
 	"sprite": "/sprites/asteroid_big.spr",
-	"collision": {
-		"x": 0,
-		"y": 0,
-		"width": 160,
-		"height": 60
-	}
+	"collisions": [
+		{
+			"points": [
+				[0,26], [40,0], [120,0], [160,26],
+				[160,36], [120,60], [40,60], [0,38]
+			]
+		}
+	]
 }

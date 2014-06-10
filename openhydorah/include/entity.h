@@ -11,6 +11,7 @@
 #include "list.h"
 #include "vector.h"
 #include "property.h"
+#include "collision.h"
 
 /**
  * \struct entity
@@ -38,6 +39,7 @@ struct entity {
 	struct list children;
 	struct list branch;
 	struct list properties;
+	struct list col_objs;
 };
 
 /**
@@ -140,6 +142,7 @@ float entity_get_position_y(struct entity *entity);
 float entity_get_number_property(struct entity *ent, const char *name);
 uint8_t entity_get_bool_property(struct entity *ent, const char *name);
 const char *entity_get_string_property(struct entity *ent, const char *name);
+struct list *entity_get_collision_objects(struct entity *ent);
 
 /* SETTERS */
 void entity_set_position_x(struct entity *entity, float x);

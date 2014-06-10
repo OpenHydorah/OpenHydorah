@@ -1,12 +1,14 @@
 {
 	"name": "player",
 	"sprite": "/sprites/player.spr",
-	"collision": {
-		"x": 0,
-		"y": 0,
-		"width": 16,
-		"height": 12
-	},
+	"collisions": [
+		{
+			"points": [
+				[0,0], [16,8],
+				[16,5], [0,11]
+			]
+		}
+	],
 	"properties": {
 		"speed": 100
 	}

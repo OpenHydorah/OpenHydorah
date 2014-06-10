@@ -1,11 +1,12 @@
-set(SRC tests_main.c tests_list.c tests_texture.c tests_entity.c tests_sprite.c tests_property.c)
-set(OH_SRC ../src/list.c ../src/texture.c ../src/filesystem.c ../src/entity.c
-	../src/sprite.c ../src/frame.c ../src/animation.c ../src/property.c)
+set(SRC tests_main.c tests_list.c tests_texture.c tests_entity.c tests_sprite.c tests_property.c
+	tests_collision.c)
+set(OH_SRC ../src/list.c ../src/texture.c ../src/filesystem.c ../src/entity.c ../src/vector.c
+	../src/sprite.c ../src/frame.c ../src/animation.c ../src/property.c ../src/collision.c)
 
 include_directories(../include)
 
 add_executable(hydorah_tests ${OH_SRC} ${SRC})
-target_link_libraries(hydorah_tests jansson)
+target_link_libraries(hydorah_tests jansson -lm)
 
 find_package(Check REQUIRED)
 if(${CHECK_FOUND})
