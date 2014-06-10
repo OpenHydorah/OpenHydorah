@@ -70,7 +70,7 @@
 find_path(SDL_INCLUDE_DIR SDL.h
   HINTS
     ENV SDLDIR
-  PATH_SUFFIXES include/SDL include/SDL2 include
+  PATH_SUFFIXES include/SDL2 include/SDL include
 )
 
 # SDL-1.1 is the name used by FreeBSD ports...

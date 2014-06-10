@@ -40,7 +40,7 @@ find_path(SDL_IMAGE_INCLUDE_DIR SDL_image.h
   HINTS
     ENV SDLIMAGEDIR
     ENV SDLDIR
-  PATH_SUFFIXES include/SDL include/SDL2 include
+  PATH_SUFFIXES include/SDL2 include/SDL include
 )
 
 if(NOT SDL_IMAGE_LIBRARY AND SDLIMAGE_LIBRARY)
