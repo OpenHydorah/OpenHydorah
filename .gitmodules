@@ -1,0 +1,3 @@
+[submodule "openhydorah/hyd_engine"]
+	path = openhydorah/hyd_engine
+	url = https://github.com/Smilex/hyd_engine.git
