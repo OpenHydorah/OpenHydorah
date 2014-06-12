@@ -1,0 +1,1 @@
+/usr/bin/cc  -fPIC -g    CMakeFiles/json_process.dir/test/bin/json_process.c.o  -o bin/json_process -rdynamic lib/libjansson.a 

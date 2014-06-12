@@ -1,0 +1,1 @@
+/usr/bin/cc  -fPIC -g    CMakeFiles/test_pack.dir/test/suites/api/test_pack.c.o  -o bin/test_pack -rdynamic lib/libjansson.a 

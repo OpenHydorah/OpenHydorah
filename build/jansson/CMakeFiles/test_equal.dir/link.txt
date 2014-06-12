@@ -1,0 +1,1 @@
+/usr/bin/cc  -fPIC -g    CMakeFiles/test_equal.dir/test/suites/api/test_equal.c.o  -o bin/test_equal -rdynamic lib/libjansson.a 

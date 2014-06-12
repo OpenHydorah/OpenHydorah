@@ -1,0 +1,1 @@
+/usr/bin/cc  -fPIC -g    CMakeFiles/test_copy.dir/test/suites/api/test_copy.c.o  -o bin/test_copy -rdynamic lib/libjansson.a 

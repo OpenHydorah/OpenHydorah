@@ -1,0 +1,1 @@
+/usr/bin/cc  -fPIC -g    CMakeFiles/test_memory_funcs.dir/test/suites/api/test_memory_funcs.c.o  -o bin/test_memory_funcs -rdynamic lib/libjansson.a 
