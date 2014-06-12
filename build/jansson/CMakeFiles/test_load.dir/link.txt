@@ -1,1 +1,0 @@
-/usr/bin/cc  -fPIC -g    CMakeFiles/test_load.dir/test/suites/api/test_load.c.o  -o bin/test_load -rdynamic lib/libjansson.a 

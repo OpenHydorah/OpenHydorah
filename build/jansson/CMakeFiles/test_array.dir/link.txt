@@ -1,1 +1,0 @@
-/usr/bin/cc  -fPIC -g    CMakeFiles/test_array.dir/test/suites/api/test_array.c.o  -o bin/test_array -rdynamic lib/libjansson.a 

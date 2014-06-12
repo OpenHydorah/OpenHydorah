@@ -1,1 +1,0 @@
-/usr/bin/cc  -fPIC -g    CMakeFiles/test_loadb.dir/test/suites/api/test_loadb.c.o  -o bin/test_loadb -rdynamic lib/libjansson.a 
