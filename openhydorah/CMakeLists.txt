@@ -3,7 +3,7 @@ project (OpenHydorah)
 
 add_subdirectory(hyd_engine)
 
-set (SRC_LIST main.d game.d intro.d main_menu.d player.d projectile.d enemy.d)
+set (SRC_LIST main.d game.d intro.d main_menu.d player.d projectile.d enemy.d weapon.d)
 
 foreach (i ${SRC_LIST})
 	set (SRC "${SRC} ${CMAKE_CURRENT_SOURCE_DIR}/src/${i}")

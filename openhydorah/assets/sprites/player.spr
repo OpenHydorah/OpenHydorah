@@ -1,6 +1,7 @@
 {
 	"img":"/graphics/sprites/spr_bueno.png",
 	"default_frame": "1",
+	"default_animation": "animation",
 	"frames": [
 		{
 			"name": "1",
