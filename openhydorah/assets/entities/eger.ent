@@ -9,6 +9,6 @@
 	},
 	"properties": {
 		"speed": 0.1,
-		"health": 5
+		"health": 1
 	}
 }

@@ -1,9 +1,87 @@
 {
 	"img":"/graphics/sprites/spr_eger.png",
-	"default_frame": "1",
+	"default_frame": "12",
+	"default_animation": "animation",
 	"frames": [
 		{
 			"name": "1",
+			"x": 0,
+			"y": 0,
+			"width": 12,
+			"height": 11
+		},
+		{
+			"name": "2",
+			"x": 12,
+			"y": 0,
+			"width": 12,
+			"height": 11
+		},
+		{
+			"name": "3",
+			"x": 24,
+			"y": 0,
+			"width": 12,
+			"height": 11
+		},
+		{
+			"name": "4",
+			"x": 36,
+			"y": 0,
+			"width": 12,
+			"height": 11
+		},
+		{
+			"name": "5",
+			"x": 48,
+			"y": 0,
+			"width": 12,
+			"height": 11
+		},
+		{
+			"name": "6",
+			"x": 60,
+			"y": 0,
+			"width": 12,
+			"height": 11
+		},
+		{
+			"name": "7",
+			"x": 72,
+			"y": 0,
+			"width": 12,
+			"height": 11
+		},
+		{
+			"name": "8",
+			"x": 84,
+			"y": 0,
+			"width": 12,
+			"height": 11
+		},
+		{
+			"name": "9",
+			"x": 96,
+			"y": 0,
+			"width": 12,
+			"height": 11
+		},
+		{
+			"name": "10",
+			"x": 108,
+			"y": 0,
+			"width": 12,
+			"height": 11
+		},
+		{
+			"name": "11",
+			"x": 120,
+			"y": 0,
+			"width": 12,
+			"height": 11
+		},
+		{
+			"name": "12",
 			"x": 132,
 			"y": 0,
 			"width": 12,
@@ -13,9 +91,13 @@
 	"animations": [
 		{
 			"name": "animation",
-			"start": "1",
+			"start": "12",
+			"repeat": true,
 			"frames": [
-				"1"
+				"12", "11", "10", 
+				"9", "8", "7", 
+				"6", "5", "4", 
+				"3", "2", "1"
 			]
 		}
 	]

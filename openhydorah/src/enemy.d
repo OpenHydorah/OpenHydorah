@@ -1,5 +1,6 @@
 import hyd.entity;
 import hyd.vector;
+import hyd.animation;
 import std.math;
 import std.stdio;
 
@@ -31,6 +32,8 @@ class Enemy {
 		}
 		enemy.pos.x -= speed * dt;
 		//enemy.pos.y += dy * speed * dt;
+
+		enemy.curr_frame = hyd_anim_get_next(enemy.curr_anim);
 	}
 
 	void draw() {
