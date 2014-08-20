@@ -1,0 +1,22 @@
+{
+	"img":"/graphics/sprites/fshoot.png",
+	"default_frame": "1",
+	"frames": [
+		{
+			"name": "1",
+			"x": 12,
+			"y": 1,
+			"width": 8,
+			"height": 3
+		}
+	],
+	"animations": [
+		{
+			"name": "animation",
+			"start": "1",
+			"frames": [
+				"1"
+			]
+		}
+	]
+}

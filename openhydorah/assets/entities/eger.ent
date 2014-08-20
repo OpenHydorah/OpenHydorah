@@ -1,0 +1,14 @@
+{
+	"name": "eger",
+	"sprite": "/sprites/eger.spr",
+	"collision": {
+		"x1": 0,
+		"y1": 0,
+		"x2": 12,
+		"y2": 11
+	},
+	"properties": {
+		"speed": 0.1,
+		"health": 5
+	}
+}

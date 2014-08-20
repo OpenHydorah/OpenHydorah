@@ -1,0 +1,14 @@
+{
+	"name": "projectile",
+	"sprite": "/sprites/fshoot.spr",
+	"collision": {
+		"x1": 0,
+		"y1": 0,
+		"x2": 8,
+		"y2": 3
+	},
+	"properties": {
+		"speed": 1,
+		"damage": 1
+	}
+}

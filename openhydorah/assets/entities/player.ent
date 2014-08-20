@@ -1,15 +1,25 @@
 {
 	"name": "player",
 	"sprite": "/sprites/player.spr",
-	"collisions": [
-		{
-			"points": [
-				[0,0], [16,8],
-				[16,5], [0,11]
-			]
-		}
-	],
+	"collision": {
+		"x1": 0,
+		"y1": 0,
+		"x2": 16,
+		"y2": 12
+	},
 	"properties": {
-		"speed": 100
-	}
+		"speed": 0.1
+	},
+	"children": [
+		{
+			"entity": {
+				"name": "wep_basic",
+				"properties": {
+					"delay": 100
+				}
+			},
+			"x": 17,
+			"y": 6
+		}
+	]
 }

@@ -1,0 +1,22 @@
+{
+	"img":"/graphics/sprites/spr_eger.png",
+	"default_frame": "1",
+	"frames": [
+		{
+			"name": "1",
+			"x": 132,
+			"y": 0,
+			"width": 12,
+			"height": 11
+		}
+	],
+	"animations": [
+		{
+			"name": "animation",
+			"start": "1",
+			"frames": [
+				"1"
+			]
+		}
+	]
+}
