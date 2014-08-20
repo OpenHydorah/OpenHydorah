@@ -1,0 +1,12 @@
+{
+	"en": {
+		"main_menu": {
+			"start": "Start game",
+			"options": "Options",
+			"exit": "Quit"
+		},
+		"editor": {
+			"show": "Play"
+		}
+	}
+}

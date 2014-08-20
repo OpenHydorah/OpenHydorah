@@ -1,30 +1,47 @@
 {
-	"entities": [
+	"layers": [
 		{
-			"entity": "/entities/player.ent",
-			"x": 0,
-			"y": 100,
-			"properties": {
-				"speed": 200
-			}
-		},
-		{
-			"entity": "/entities/asteroid_big.ent",
-			"x": 150,
-			"y": 100
-		},
-		{
-			"entity": {
-				"sprite": "sprites/asteroid_small.spr",
-				"collision": {
+			"entities": [
+				{
+					"entity": "/entities/player.ent",
 					"x": 0,
-					"y": 0,
-					"width": 100,
-					"height": 48
+					"y": 10
+				},
+				{
+					"entity": "/entities/eger.ent",
+					"x": 400,
+					"y": 80
+				},
+				{
+					"entity": "/entities/eger.ent",
+					"x": 412,
+					"y": 80
+				},
+				{
+					"entity": "/entities/eger.ent",
+					"x": 424,
+					"y": 80
+				},
+				{
+					"entity": "/entities/eger.ent",
+					"x": 436,
+					"y": 80
+				},
+				{
+					"entity": "/entities/eger.ent",
+					"x": 448,
+					"y": 80
 				}
-			},
-			"x": 200,
-			"y": 300
+			]
+		},
+		{
+			"entities": [
+				{
+					"entity": "/entities/asteroid_big.ent",
+					"x": 20,
+					"y": 10
+				}
+			]
 		}
 	]
 }

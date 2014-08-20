@@ -1,20 +1,52 @@
 {
-	"preset": {
-		"up": {
+	"preset": [
+		{
+			"name": "up",
 			"type": "key",
-			"key":	"UP"
+			"value": "UP"
 		},
-		"down": {
+		{
+			"name": "down",
 			"type": "key",
-			"key":	"DOWN"
+			"value": "DOWN"
 		},
-		"left": {
+		{
+			"name": "left",
 			"type": "key",
-			"key":	"LEFT"
+			"value": "LEFT"
 		},
-		"right": {
+		{
+			"name": "right",
 			"type": "key",
-			"key":	"RIGHT"
+			"value": "RIGHT"
+		},
+		{
+			"name": "up",
+			"type": "axis",
+			"value": "lefty",
+			"mod": "negative"
+		},
+		{
+			"name": "down",
+			"type": "axis",
+			"value": "lefty"
+		},
+		{
+			"name": "left",
+			"type": "axis",
+			"value": "leftx",
+			"mod": "negative"
+		},
+		{
+			"name": "right",
+			"type": "axis",
+			"value": "leftx"
+		},
+
+		{
+			"name": "fire",
+			"type": "key",
+			"value": "SPACE"
 		}
-	}
+	]
 }
