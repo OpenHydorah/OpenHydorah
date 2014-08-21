@@ -4,6 +4,7 @@ import hyd.input;
 import hyd.scene;
 import hyd.layer;
 import hyd.vector;
+import hyd.animation;
 import std.stdio;
 
 import weapon;
@@ -67,6 +68,18 @@ class Player {
 				vertical -= down;
 		}
 
+		if (vertical < 0) {
+			player.curr_frame = hyd_anim_get_prev(player.curr_anim);
+		}
+		else if (vertical > 0) {
+			player.curr_frame = hyd_anim_get_next(player.curr_anim);
+		}
+		else {
+			if (player.curr_anim.curr_frame < player.curr_anim.start_frame)
+				player.curr_frame = hyd_anim_get_next(player.curr_anim);
+			else if (player.curr_anim.curr_frame > player.curr_anim.start_frame)
+				player.curr_frame = hyd_anim_get_prev(player.curr_anim);
+		}
 		player.pos.x += horizontal * speed * dt;
 		player.pos.y += vertical * speed * dt;
 
