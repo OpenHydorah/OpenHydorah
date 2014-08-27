@@ -40,14 +40,14 @@ class Weapon {
 	}
 
 	void update(uint dt) {
-		foreach (p; projectiles) {
+		for (auto r = projectiles[]; !r.empty; ) {
+			auto p = r.front;
 			p.update(dt);
 			if (p.past_delay) {
-				auto r = find(projectiles[], p);
-				auto s = take(r, 1);
-				projectiles.linearRemove(s);
-				delete p;
+				r = projectiles.linearRemove(r.take(1));
 			}
+			else
+				r.popFront();
 		}
 	}
 
